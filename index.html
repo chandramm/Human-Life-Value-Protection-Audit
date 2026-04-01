@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Professional HLV & Risk Audit (2026)</title>
+    <title>Financial Protection Audit | Chandramohan</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .hidden { display: none !important; }
@@ -17,81 +17,180 @@
         .section-header { border-left: 4px solid #1e3a8a; padding-left: 10px; margin-bottom: 15px; }
         .risk-row { background-color: #fff1f2; border: 1px solid #fecdd3; padding: 10px; border-radius: 8px; }
         .asset-row { background-color: #f0fdf4; border: 1px solid #dcfce7; padding: 10px; border-radius: 8px; }
+        .sub-section { background-color: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0; }
+        @media print { .no-print { display: none; } }
     </style>
 </head>
 <body class="bg-slate-50 min-h-screen py-8" onload="init()">
 
     <div class="max-w-6xl mx-auto px-4">
-        <header class="mb-8 border-b-2 border-blue-900 pb-4">
-            <h1 class="text-3xl font-black text-blue-900 tracking-tight">HLV, Debt & Health Risk Audit</h1>
-            <p class="text-slate-500 font-medium italic text-sm">360° Financial Protection Strategy for the Modern Indian Family</p>
+        <header class="mb-8 border-b-2 border-blue-900 pb-4 flex justify-between items-center">
+            <div>
+                <h1 class="text-3xl font-black text-blue-900 tracking-tight">Financial Protection Audit</h1>
+                <p class="text-slate-500 font-medium italic text-sm">Comprehensive Risk & Liability Assessment by Chandramohan</p>
+            </div>
+            <div class="text-right no-print">
+                <p class="text-xs font-bold text-blue-900 uppercase">Expert: Chandramohan</p>
+                <p class="text-[10px] text-slate-400">9791004920</p>
+            </div>
         </header>
 
         <div class="grid lg:grid-cols-12 gap-8">
-            <div class="lg:col-span-7 space-y-6">
+            <div class="lg:col-span-7 space-y-8">
                 
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                    <h2 class="text-lg font-bold text-blue-800 section-header">1. Income & Age</h2>
+                    <h2 class="text-lg font-bold text-blue-800 section-header">1. Income & Regional Profile</h2>
                     <div class="grid md:grid-cols-2 gap-4">
-                        <input type="number" id="userAge" value="35" oninput="deepCalc()" placeholder="Current Age">
-                        <input type="number" id="userIncome" value="100000" oninput="deepCalc()" placeholder="Monthly Take-Home (₹)">
+                        <div>
+                            <label>City Category</label>
+                            <select id="cityTier" onchange="deepCalc()">
+                                <option value="1.8">Metro (Mumbai/Delhi/Bangalore)</option>
+                                <option value="1.2" selected>Tier 1 (Chennai/Hyderabad/Pune)</option>
+                                <option value="0.85">Tier 2 (Coimbatore/Vizag)</option>
+                                <option value="0.55">Tier 3/Rural Towns</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Your Current Age</label>
+                            <input type="number" id="userAge" value="35" oninput="deepCalc()">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label>Monthly Take-Home Income (₹)</label>
+                            <input type="number" id="userIncome" value="100000" oninput="deepCalc()">
+                        </div>
                     </div>
                 </div>
 
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                     <h2 class="text-lg font-bold text-red-700 section-header">2. Health & Longevity Risk</h2>
-                    <p class="text-xs text-slate-500 mb-4 italic">Chronic conditions drain your "Risk Pool" (Assets) over time.</p>
-                    <div class="space-y-4">
-                        <div class="risk-row">
-                            <label class="text-red-900">Current Medical Conditions</label>
-                            <div class="grid grid-cols-2 gap-2 mt-2">
-                                <label class="text-xs font-medium"><input type="checkbox" class="med-cond" value="5000" onchange="deepCalc()"> Diabetes</label>
-                                <label class="text-xs font-medium"><input type="checkbox" class="med-cond" value="3000" onchange="deepCalc()"> Hypertension (BP)</label>
-                                <label class="text-xs font-medium"><input type="checkbox" class="med-cond" value="8000" onchange="deepCalc()"> Heart Condition</label>
-                                <label class="text-xs font-medium"><input type="checkbox" class="med-cond" value="10000" onchange="deepCalc()"> Chronic Kidney/Other</label>
-                            </div>
+                    <div class="risk-row mb-4">
+                        <label class="text-red-900">Chronic Conditions (Monthly Drain)</label>
+                        <div class="grid grid-cols-2 gap-2 mt-2">
+                            <label class="text-xs font-medium"><input type="checkbox" class="med-cond" value="5000" onchange="deepCalc()"> Diabetes</label>
+                            <label class="text-xs font-medium"><input type="checkbox" class="med-cond" value="3000" onchange="deepCalc()"> Hypertension</label>
                         </div>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <label>Other Monthly Med. Spend (₹)</label>
+                            <input type="number" id="monthlyMedSpend" value="0" oninput="deepCalc()">
+                        </div>
+                        <div>
+                            <label>Longevity History</label>
+                            <select id="longevityFactor" onchange="deepCalc()">
+                                <option value="1.0">Average (75-80 Yrs)</option>
+                                <option value="1.2">Early Illness History</option>
+                                <option value="0.9">High (85+ History)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <h2 class="text-lg font-bold text-orange-700 section-header">3. Parental Support (Independent Living)</h2>
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="p-4 bg-orange-50 rounded-xl border border-orange-100">
+                            <label>Father's Status</label>
+                            <div class="radio-group mb-2">
+                                <label class="radio-item"><input type="radio" name="fatherAlive" value="yes" checked onchange="deepCalc()"> Alive</label>
+                                <label class="radio-item"><input type="radio" name="fatherAlive" value="no" onchange="deepCalc()"> No</label>
+                            </div>
+                            <input type="number" id="fatherAge" value="65" oninput="deepCalc()">
+                        </div>
+                        <div class="p-4 bg-orange-50 rounded-xl border border-orange-100">
+                            <label>Mother's Status</label>
+                            <div class="radio-group mb-2">
+                                <label class="radio-item"><input type="radio" name="motherAlive" value="yes" checked onchange="deepCalc()"> Alive</label>
+                                <label class="radio-item"><input type="radio" name="motherAlive" value="no" onchange="deepCalc()"> No</label>
+                            </div>
+                            <input type="number" id="motherAge" value="60" oninput="deepCalc()">
+                        </div>
+                    </div>
+                    <div class="mt-4 grid md:grid-cols-2 gap-4 border-t pt-4">
+                        <input type="number" id="parentMonthly" value="25000" placeholder="Monthly Support" oninput="deepCalc()">
+                        <input type="number" id="parentMedical" value="100000" placeholder="Annual Medical" oninput="deepCalc()">
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <h2 class="text-lg font-bold text-blue-800 section-header">4. Housing Liability</h2>
+                    <div class="radio-group mb-4">
+                        <label class="radio-item"><input type="radio" name="planBuy" value="no" onchange="handleLiabilityBranch()"> Yes, I own it</label>
+                        <label class="radio-item"><input type="radio" name="planBuy" value="yes" checked onchange="handleLiabilityBranch()"> No, planning to buy</label>
+                    </div>
+
+                    <div id="futureHomeSection" class="p-5 bg-blue-50 rounded-xl space-y-4">
                         <div class="grid md:grid-cols-2 gap-4">
                             <div>
-                                <label>Monthly Med. Spend (₹)</label>
-                                <input type="number" id="monthlyMedSpend" value="0" oninput="deepCalc()">
+                                <label>Micro-Setting</label>
+                                <select id="microSetting" onchange="deepCalc()">
+                                    <option value="1.0">Urban (City Center)</option>
+                                    <option value="0.75">Semi-Urban</option>
+                                    <option value="0.50">Rural</option>
+                                </select>
                             </div>
                             <div>
-                                <label>Family Longevity History</label>
-                                <select id="longevityFactor" onchange="deepCalc()">
-                                    <option value="1.0">Average (75-80 Yrs)</option>
-                                    <option value="1.2">Low (History of early illness)</option>
-                                    <option value="0.9">High (Parents lived 85+)</option>
+                                <label>Property Type</label>
+                                <select id="propType" onchange="deepCalc()">
+                                    <option value="5500000">2 BHK</option>
+                                    <option value="10000000" selected>3 BHK / Villa</option>
+                                    <option value="20000000">Luxury House</option>
                                 </select>
                             </div>
                         </div>
+                        <input type="number" id="buyInYears" value="5" placeholder="Years to buy" oninput="deepCalc()">
+                    </div>
+
+                    <div id="existingLoanSection" class="hidden p-5 bg-slate-50 rounded-xl border border-slate-200">
+                        <label>Active Loan?</label>
+                        <div class="radio-group mb-4">
+                            <label class="radio-item"><input type="radio" name="isLoaned" value="yes" onchange="handleLoanToggle()"> Yes</label>
+                            <label class="radio-item"><input type="radio" name="isLoaned" value="no" checked onchange="handleLoanToggle()"> No</label>
+                        </div>
+                        <div id="loanFields" class="hidden grid md:grid-cols-2 gap-4 border-t pt-4">
+                            <input type="number" id="loanPrincipal" value="5000000" placeholder="Loan Amount">
+                            <input type="number" id="loanInt" value="9.0" placeholder="Interest %">
+                            <input type="number" id="loanTenure" value="20" placeholder="Tenure Yrs">
+                            <input type="month" id="loanStart" value="2022-01">
+                        </div>
                     </div>
                 </div>
 
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                    <h2 class="text-lg font-bold text-green-700 section-header">3. Current Financial Assets</h2>
+                    <h2 class="text-lg font-bold text-purple-800 section-header">5. Sibling & Immediate Family Support</h2>
+                    <div class="space-y-4 mb-6">
+                        <div class="sub-section">
+                            <label>Sibling Marriage/Milestone Support (₹)</label>
+                            <input type="number" id="sibMarriage" value="0" oninput="deepCalc()">
+                        </div>
+                        <div class="sub-section">
+                            <label>Sibling/Extended Education Support (₹)</label>
+                            <input type="number" id="sibEdu" value="0" oninput="deepCalc()">
+                        </div>
+                        <div class="sub-section">
+                            <label>Emotional/Emergency Buffer for Siblings (₹)</label>
+                            <input type="number" id="sibBuf" value="0" oninput="deepCalc()">
+                        </div>
+                    </div>
+                    <div class="border-t pt-4">
+                        <label>Immediate Children</label>
+                        <input type="number" id="numChildren" value="1" min="0" onchange="generateChildren()">
+                        <div id="childContainer" class="mt-4 space-y-3"></div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <h2 class="text-lg font-bold text-green-700 section-header">6. Existing Financial Assets</h2>
                     <div class="grid md:grid-cols-2 gap-4">
                         <div class="asset-row"><label>Bank/PO/Gold (₹)</label><input type="number" id="assetLiquid" value="0" oninput="deepCalc()"></div>
                         <div class="asset-row"><label>Mutual Funds/Equity (₹)</label><input type="number" id="assetMarket" value="0" oninput="deepCalc()"></div>
-                        <div class="md:col-span-2 p-3 bg-blue-50 rounded-lg"><label>Existing Life Cover (₹)</label><input type="number" id="currentLIC" value="0" oninput="deepCalc()"></div>
-                    </div>
-                </div>
-
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                    <h2 class="text-lg font-bold text-slate-800 section-header">4. Future Obligations</h2>
-                    <div class="space-y-4">
-                        <div class="p-3 bg-orange-50 rounded-lg border border-orange-100 flex justify-between">
-                            <label>Monthly Support for Parents (₹)</label>
-                            <input type="number" id="parentMonthly" value="25000" class="!w-1/2" oninput="deepCalc()">
-                        </div>
-                        <div class="p-3 bg-blue-50 rounded-lg border border-blue-100 flex justify-between">
-                            <label>Home Loan / Future Home (₹)</label>
-                            <input type="number" id="loanAmt" value="0" class="!w-1/2" oninput="deepCalc()">
-                        </div>
-                        <div class="p-3 bg-slate-50 rounded-lg border border-slate-200">
-                            <label>No. of Children</label>
-                            <input type="number" id="numChildren" value="1" onchange="generateChildren()">
-                            <div id="childContainer" class="mt-2 space-y-2"></div>
+                        <div class="md:col-span-2 p-3 bg-blue-50 rounded-lg"><label>Existing Life Insurance Sum Assured (₹)</label><input type="number" id="currentLIC" value="0" oninput="deepCalc()"></div>
+                        <div class="md:col-span-2 p-3 bg-green-50 rounded-lg">
+                            <label>Inheritance Expected (Amount & Years)</label>
+                            <div class="flex gap-2">
+                                <input type="number" id="inheritAmt" value="0" oninput="deepCalc()">
+                                <input type="number" id="inheritYrs" value="15" oninput="deepCalc()">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -99,38 +198,57 @@
 
             <div class="lg:col-span-5">
                 <div class="sticky top-8 space-y-4">
-                    <div class="result-card text-white p-6 rounded-2xl shadow-lg">
-                        <h3 class="text-blue-200 uppercase text-xs font-black tracking-widest">Gross Protection Need</h3>
+                    <div class="result-card text-white p-8 rounded-3xl shadow-xl">
+                        <h3 class="text-blue-200 uppercase text-xs font-black tracking-widest">Total Family Need</h3>
                         <div id="totalNeed" class="text-4xl font-black mb-1">₹ 0</div>
                     </div>
-
-                    <div class="bg-white p-5 rounded-2xl shadow-md border-2 border-red-100">
-                        <h3 class="text-red-600 uppercase text-[10px] font-black tracking-widest">Medical "Wealth Drain" Forecast</h3>
+                    
+                    <div class="bg-white p-5 rounded-2xl border-2 border-red-100">
+                        <h3 class="text-red-600 uppercase text-[10px] font-black tracking-widest">Medical "Wealth Drain"</h3>
                         <div id="medDrain" class="text-2xl font-bold text-slate-800">₹ 0</div>
-                        <p class="text-[9px] text-slate-400 mt-1 uppercase">Asset value lost to chronic care before retirement.</p>
                     </div>
 
                     <div class="gap-card text-white p-8 rounded-3xl shadow-xl border-b-8 border-red-900">
-                        <h3 class="text-red-200 uppercase text-xs font-black tracking-widest mb-1">Unfunded Protection Gap</h3>
+                        <h3 class="text-red-200 uppercase text-xs font-black tracking-widest mb-1">Unfunded Gap (Net Policy Recommended)</h3>
                         <div id="totalGap" class="text-5xl font-black mb-4 tracking-tighter">₹ 0</div>
-                        <p class="text-red-100 text-xs opacity-90 italic">Critical shortfall to be covered by Term Life Policy.</p>
+                        <p class="text-red-100 text-xs opacity-90 italic">Calculated by Chandramohan after full asset deduction.</p>
                     </div>
 
-                    <button onclick="window.print()" class="w-full py-4 bg-slate-900 text-white rounded-2xl font-bold uppercase tracking-widest hover:bg-black transition-all">Download Audit Report</button>
+                    <div class="bg-white p-6 rounded-2xl border shadow-md text-center no-print">
+                        <p class="text-lg font-black text-blue-900">Chandramohan</p>
+                        <p class="text-sm font-bold text-slate-700 mb-4">9791004920</p>
+                        <a href="https://wa.me/919791004920?text=Hi%20Chandramohan,%20I%20have%20completed%20the%20HLV%20Audit." 
+                           class="inline-block w-full bg-green-600 text-white py-3 rounded-xl font-bold hover:bg-green-700 transition">
+                            Discuss Results on WhatsApp
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        function init() { generateChildren(); }
+        function init() { handleLiabilityBranch(); generateChildren(); }
+
+        function handleLiabilityBranch() {
+            const planBuy = document.querySelector('input[name="planBuy"]:checked').value;
+            document.getElementById('futureHomeSection').classList.toggle('hidden', planBuy === 'no');
+            document.getElementById('existingLoanSection').classList.toggle('hidden', planBuy === 'yes');
+            deepCalc();
+        }
+
+        function handleLoanToggle() {
+            const isLoaned = document.querySelector('input[name="isLoaned"]:checked').value;
+            document.getElementById('loanFields').classList.toggle('hidden', isLoaned === 'no');
+            deepCalc();
+        }
 
         function generateChildren() {
             const count = parseInt(document.getElementById('numChildren').value) || 0;
             const container = document.getElementById('childContainer');
             container.innerHTML = '';
             for (let i = 1; i <= count; i++) {
-                container.innerHTML += `<input type="number" class="c-age p-2 border rounded w-full text-sm mt-1" value="5" oninput="deepCalc()" placeholder="Child ${i} Age">`;
+                container.innerHTML += `<div class="bg-white p-2 rounded border border-blue-100 flex gap-2"><input type="number" class="c-age" value="5" oninput="deepCalc()" placeholder="Age" class="w-full"></div>`;
             }
             deepCalc();
         }
@@ -138,46 +256,67 @@
         function deepCalc() {
             const age = parseInt(document.getElementById('userAge').value) || 35;
             const income = parseInt(document.getElementById('userIncome').value) || 0;
-            const yearsToRetire = Math.max(0, 60 - age);
-            
-            const gInf = 0.06, medInf = 0.10, roi = 0.08;
-            const realRate = (roi - gInf) / (1 + gInf);
-            const medRealRate = (roi - medInf) / (1 + medInf);
+            const cityMult = parseFloat(document.getElementById('cityTier').value);
+            const gInf = 0.06, roi = 0.08, realRate = (roi - gInf) / (1 + gInf);
 
-            // 1. LIABILITIES
-            let hlvIncome = (income * 12 * 0.7) * ((1 - Math.pow(1 + realRate, -yearsToRetire)) / realRate);
-            let parentFund = (parseFloat(document.getElementById('parentMonthly').value) || 0) * 12 * ((1 - Math.pow(1 + realRate, -20)) / realRate);
-            
+            // 1. Income replacement
+            let hlvIncome = (income * 12 * 0.7) * ((1 - Math.pow(1 + realRate, -(60 - age))) / realRate);
+
+            // 2. Parents
+            let parentFund = 0;
+            const fAlive = document.querySelector('input[name="fatherAlive"]:checked').value === 'yes';
+            const mAlive = document.querySelector('input[name="motherAlive"]:checked').value === 'yes';
+            if (fAlive || mAlive) {
+                const mult = (fAlive && mAlive) ? 1.0 : 0.6;
+                const pAge = Math.max(fAlive ? parseInt(document.getElementById('fatherAge').value) : 0, mAlive ? parseInt(document.getElementById('motherAge').value) : 0);
+                const years = Math.max(0, 85 - pAge);
+                parentFund = ((parseFloat(document.getElementById('parentMonthly').value) || 0) * 12 * mult * ((1 - Math.pow(1 + realRate, -years)) / realRate));
+            }
+
+            // 3. Housing
+            let liability = 0;
+            const planBuy = document.querySelector('input[name="planBuy"]:checked').value;
+            if (planBuy === 'yes') {
+                const base = parseFloat(document.getElementById('propType').value);
+                const micro = parseFloat(document.getElementById('microSetting').value);
+                const years = parseInt(document.getElementById('buyInYears').value) || 0;
+                liability = (base * cityMult * micro) * Math.pow(1.06, years) * 0.8;
+            } else if (document.querySelector('input[name="isLoaned"]:checked').value === 'yes') {
+                const principal = parseFloat(document.getElementById('loanPrincipal').value) || 0;
+                const r = (parseFloat(document.getElementById('loanInt').value) || 9) / 1200;
+                const tenure = (parseInt(document.getElementById('loanTenure').value) || 20) * 12;
+                const start = new Date(document.getElementById('loanStart').value + "-01");
+                const monthsPassed = Math.max(0, (new Date().getFullYear() - start.getFullYear()) * 12 + (new Date().getMonth() - start.getMonth()));
+                const left = tenure - monthsPassed;
+                if (r > 0 && left > 0) {
+                    const emi = principal * r * Math.pow(1 + r, tenure) / (Math.pow(1 + r, tenure) - 1);
+                    liability = emi * (Math.pow(1 + r, left) - 1) / (r * Math.pow(1 + r, left));
+                }
+            }
+
+            // 4. Children & Siblings
             let eduCorpus = 0;
             document.querySelectorAll('.c-age').forEach((el) => {
                 let yTo18 = 18 - parseInt(el.value);
                 if(yTo18 > 0) eduCorpus += (2500000 * Math.pow(1.10, yTo18)) / Math.pow(1.08, yTo18);
             });
+            const sibTotal = (parseFloat(document.getElementById('sibMarriage').value) || 0) + (parseFloat(document.getElementById('sibEdu').value) || 0) + (parseFloat(document.getElementById('sibBuf').value) || 0);
 
-            // 2. HEALTH RISK DRAIN
+            // 5. Health Drain
             let monthlyMed = parseFloat(document.getElementById('monthlyMedSpend').value) || 0;
-            document.querySelectorAll('.med-cond:checked').forEach(cond => {
-                monthlyMed += parseFloat(cond.value); // Add weighted medication cost per condition
-            });
-            const healthRiskMultiplier = parseFloat(document.getElementById('longevityFactor').value);
-            
-            // Forecasted Wealth Drain (PV of lifetime medical maintenance)
-            let medicalWealthDrain = (monthlyMed * 12) * ((1 - Math.pow(1 + medRealRate, -yearsToRetire)) / medRealRate);
-            medicalWealthDrain *= healthRiskMultiplier; // Scale by longevity factor
+            document.querySelectorAll('.med-cond:checked').forEach(c => monthlyMed += parseFloat(c.value));
+            const medRealRate = (roi - 0.10) / 1.10;
+            const medDrain = (monthlyMed * 12) * ((1 - Math.pow(1 + medRealRate, -(60 - age))) / medRealRate);
 
-            // 3. ASSETS
-            const liquid = parseFloat(document.getElementById('assetLiquid').value) || 0;
-            const market = parseFloat(document.getElementById('assetMarket').value) || 0;
-            const lic = parseFloat(document.getElementById('currentLIC').value) || 0;
-            const totalAssets = (liquid + market + lic) - medicalWealthDrain; // Deduction for health maintenance
+            // 6. Assets Deduction
+            const totalAssets = (parseFloat(document.getElementById('assetLiquid').value) || 0) + (parseFloat(document.getElementById('assetMarket').value) || 0) + (parseFloat(document.getElementById('currentLIC').value) || 0) + ((parseFloat(document.getElementById('inheritAmt').value) || 0) / Math.pow(1.08, parseInt(document.getElementById('inheritYrs').value) || 1));
 
-            const loan = parseFloat(document.getElementById('loanAmt').value) || 0;
-            const totalNeed = hlvIncome + parentFund + eduCorpus + loan;
+            const totalNeed = hlvIncome + parentFund + liability + eduCorpus + sibTotal + medDrain;
             const gap = Math.max(0, totalNeed - totalAssets);
 
             const fmt = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 });
             document.getElementById('totalNeed').innerText = fmt.format(Math.round(totalNeed));
-            document.getElementById('medDrain').innerText = fmt.format(Math.round(medicalWealthDrain));
+            document.getElementById('medDrain').innerText = fmt.format(Math.round(medDrain));
             document.getElementById('totalGap').innerText = fmt.format(Math.round(gap));
         }
     </script>

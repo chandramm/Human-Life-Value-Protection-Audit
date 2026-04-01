@@ -64,10 +64,12 @@
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                     <h2 class="text-lg font-bold text-red-700 section-header">2. Health & Longevity Risk</h2>
                     <div class="risk-row mb-4">
-                        <label class="text-red-900">Chronic Conditions (Monthly Drain)</label>
+                        <label class="text-red-900">Chronic Conditions (Impact on Risk Pool)</label>
                         <div class="grid grid-cols-2 gap-2 mt-2">
                             <label class="text-xs font-medium"><input type="checkbox" class="med-cond" value="5000" onchange="deepCalc()"> Diabetes</label>
                             <label class="text-xs font-medium"><input type="checkbox" class="med-cond" value="3000" onchange="deepCalc()"> Hypertension</label>
+                            <label class="text-xs font-medium"><input type="checkbox" class="med-cond" value="8000" onchange="deepCalc()"> Heart Condition</label>
+                            <label class="text-xs font-medium"><input type="checkbox" class="med-cond" value="10000" onchange="deepCalc()"> Chronic Kidney/Other</label>
                         </div>
                     </div>
                     <div class="grid md:grid-cols-2 gap-4">
@@ -87,7 +89,7 @@
                 </div>
 
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                    <h2 class="text-lg font-bold text-orange-700 section-header">3. Parental Support (Independent Living)</h2>
+                    <h2 class="text-lg font-bold text-orange-700 section-header">3. Parental Support Liability</h2>
                     <div class="grid md:grid-cols-2 gap-6">
                         <div class="p-4 bg-orange-50 rounded-xl border border-orange-100">
                             <label>Father's Status</label>
@@ -142,7 +144,7 @@
                     </div>
 
                     <div id="existingLoanSection" class="hidden p-5 bg-slate-50 rounded-xl border border-slate-200">
-                        <label>Active Loan?</label>
+                        <label>Is there an active loan?</label>
                         <div class="radio-group mb-4">
                             <label class="radio-item"><input type="radio" name="isLoaned" value="yes" onchange="handleLoanToggle()"> Yes</label>
                             <label class="radio-item"><input type="radio" name="isLoaned" value="no" checked onchange="handleLoanToggle()"> No</label>
@@ -159,18 +161,9 @@
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                     <h2 class="text-lg font-bold text-purple-800 section-header">5. Sibling & Immediate Family Support</h2>
                     <div class="space-y-4 mb-6">
-                        <div class="sub-section">
-                            <label>Sibling Marriage/Milestone Support (₹)</label>
-                            <input type="number" id="sibMarriage" value="0" oninput="deepCalc()">
-                        </div>
-                        <div class="sub-section">
-                            <label>Sibling/Extended Education Support (₹)</label>
-                            <input type="number" id="sibEdu" value="0" oninput="deepCalc()">
-                        </div>
-                        <div class="sub-section">
-                            <label>Emotional/Emergency Buffer for Siblings (₹)</label>
-                            <input type="number" id="sibBuf" value="0" oninput="deepCalc()">
-                        </div>
+                        <div class="sub-section"><label>Sibling Marriage Provision (₹)</label><input type="number" id="sibMarriage" value="0" oninput="deepCalc()"></div>
+                        <div class="sub-section"><label>Sibling Education Support (₹)</label><input type="number" id="sibEdu" value="0" oninput="deepCalc()"></div>
+                        <div class="sub-section"><label>Emotional/Emergency Buffer for Siblings (₹)</label><input type="number" id="sibBuf" value="0" oninput="deepCalc()"></div>
                     </div>
                     <div class="border-t pt-4">
                         <label>Immediate Children</label>
@@ -199,19 +192,20 @@
             <div class="lg:col-span-5">
                 <div class="sticky top-8 space-y-4">
                     <div class="result-card text-white p-8 rounded-3xl shadow-xl">
-                        <h3 class="text-blue-200 uppercase text-xs font-black tracking-widest">Total Family Need</h3>
+                        <h3 class="text-blue-200 uppercase text-xs font-black tracking-widest">Gross Family Need</h3>
                         <div id="totalNeed" class="text-4xl font-black mb-1">₹ 0</div>
                     </div>
                     
                     <div class="bg-white p-5 rounded-2xl border-2 border-red-100">
                         <h3 class="text-red-600 uppercase text-[10px] font-black tracking-widest">Medical "Wealth Drain"</h3>
                         <div id="medDrain" class="text-2xl font-bold text-slate-800">₹ 0</div>
+                        <p class="text-[9px] text-slate-400 mt-1">LIFETIME MAINTENANCE COST FORECAST</p>
                     </div>
 
                     <div class="gap-card text-white p-8 rounded-3xl shadow-xl border-b-8 border-red-900">
-                        <h3 class="text-red-200 uppercase text-xs font-black tracking-widest mb-1">Unfunded Gap (Net Policy Recommended)</h3>
+                        <h3 class="text-red-200 uppercase text-xs font-black tracking-widest mb-1">Recommended Term Cover</h3>
                         <div id="totalGap" class="text-5xl font-black mb-4 tracking-tighter">₹ 0</div>
-                        <p class="text-red-100 text-xs opacity-90 italic">Calculated by Chandramohan after full asset deduction.</p>
+                        <p class="text-red-100 text-xs opacity-90 italic">Gap Assessment by Chandramohan.</p>
                     </div>
 
                     <div class="bg-white p-6 rounded-2xl border shadow-md text-center no-print">
@@ -259,10 +253,8 @@
             const cityMult = parseFloat(document.getElementById('cityTier').value);
             const gInf = 0.06, roi = 0.08, realRate = (roi - gInf) / (1 + gInf);
 
-            // 1. Income replacement
             let hlvIncome = (income * 12 * 0.7) * ((1 - Math.pow(1 + realRate, -(60 - age))) / realRate);
 
-            // 2. Parents
             let parentFund = 0;
             const fAlive = document.querySelector('input[name="fatherAlive"]:checked').value === 'yes';
             const mAlive = document.querySelector('input[name="motherAlive"]:checked').value === 'yes';
@@ -273,7 +265,6 @@
                 parentFund = ((parseFloat(document.getElementById('parentMonthly').value) || 0) * 12 * mult * ((1 - Math.pow(1 + realRate, -years)) / realRate));
             }
 
-            // 3. Housing
             let liability = 0;
             const planBuy = document.querySelector('input[name="planBuy"]:checked').value;
             if (planBuy === 'yes') {
@@ -286,15 +277,14 @@
                 const r = (parseFloat(document.getElementById('loanInt').value) || 9) / 1200;
                 const tenure = (parseInt(document.getElementById('loanTenure').value) || 20) * 12;
                 const start = new Date(document.getElementById('loanStart').value + "-01");
-                const monthsPassed = Math.max(0, (new Date().getFullYear() - start.getFullYear()) * 12 + (new Date().getMonth() - start.getMonth()));
-                const left = tenure - monthsPassed;
+                const passed = Math.max(0, (new Date().getFullYear() - start.getFullYear()) * 12 + (new Date().getMonth() - start.getMonth()));
+                const left = tenure - passed;
                 if (r > 0 && left > 0) {
                     const emi = principal * r * Math.pow(1 + r, tenure) / (Math.pow(1 + r, tenure) - 1);
                     liability = emi * (Math.pow(1 + r, left) - 1) / (r * Math.pow(1 + r, left));
                 }
             }
 
-            // 4. Children & Siblings
             let eduCorpus = 0;
             document.querySelectorAll('.c-age').forEach((el) => {
                 let yTo18 = 18 - parseInt(el.value);
@@ -302,13 +292,11 @@
             });
             const sibTotal = (parseFloat(document.getElementById('sibMarriage').value) || 0) + (parseFloat(document.getElementById('sibEdu').value) || 0) + (parseFloat(document.getElementById('sibBuf').value) || 0);
 
-            // 5. Health Drain
             let monthlyMed = parseFloat(document.getElementById('monthlyMedSpend').value) || 0;
             document.querySelectorAll('.med-cond:checked').forEach(c => monthlyMed += parseFloat(c.value));
             const medRealRate = (roi - 0.10) / 1.10;
             const medDrain = (monthlyMed * 12) * ((1 - Math.pow(1 + medRealRate, -(60 - age))) / medRealRate);
 
-            // 6. Assets Deduction
             const totalAssets = (parseFloat(document.getElementById('assetLiquid').value) || 0) + (parseFloat(document.getElementById('assetMarket').value) || 0) + (parseFloat(document.getElementById('currentLIC').value) || 0) + ((parseFloat(document.getElementById('inheritAmt').value) || 0) / Math.pow(1.08, parseInt(document.getElementById('inheritYrs').value) || 1));
 
             const totalNeed = hlvIncome + parentFund + liability + eduCorpus + sibTotal + medDrain;

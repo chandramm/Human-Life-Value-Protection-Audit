@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .hidden { display: none !important; }
-        input, select { 
+        input[type="number"], input[type="month"], select { 
             width: 100%; border: 1px solid #e2e8f0; padding: 0.7rem; border-radius: 0.5rem; 
             margin-top: 0.25rem; font-size: 0.95rem;
         }
@@ -18,7 +18,26 @@
         .risk-row { background-color: #fff1f2; border: 1px solid #fecdd3; padding: 10px; border-radius: 8px; }
         .asset-row { background-color: #f0fdf4; border: 1px solid #dcfce7; padding: 10px; border-radius: 8px; }
         .sub-section { background-color: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0; }
-        @media print { .no-print { display: none; } }
+        
+        /* FIXED ALIGNMENT CSS */
+        .radio-group { display: flex; gap: 1.5rem; margin-top: 0.5rem; flex-wrap: wrap; }
+        .radio-item, .checkbox-item { 
+            display: inline-flex; 
+            align-items: center; 
+            gap: 0.5rem; 
+            cursor: pointer; 
+            font-size: 0.85rem;
+            font-weight: 500;
+            line-height: 1; /* Prevents text from pushing boundaries */
+        }
+        input[type="radio"], input[type="checkbox"] { 
+            width: 1.1rem; 
+            height: 1.1rem; 
+            cursor: pointer;
+            margin: 0; /* Removes default browser margins */
+        }
+
+        @media print { .no-print { display: none !important; } }
     </style>
 </head>
 <body class="bg-slate-50 min-h-screen py-8" onload="init()">
@@ -64,12 +83,12 @@
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                     <h2 class="text-lg font-bold text-red-700 section-header">2. Health & Longevity Risk</h2>
                     <div class="risk-row mb-4">
-                        <label class="text-red-900">Chronic Conditions (Impact on Risk Pool)</label>
-                        <div class="grid grid-cols-2 gap-2 mt-2">
-                            <label class="text-xs font-medium"><input type="checkbox" class="med-cond" value="5000" onchange="deepCalc()"> Diabetes</label>
-                            <label class="text-xs font-medium"><input type="checkbox" class="med-cond" value="3000" onchange="deepCalc()"> Hypertension</label>
-                            <label class="text-xs font-medium"><input type="checkbox" class="med-cond" value="8000" onchange="deepCalc()"> Heart Condition</label>
-                            <label class="text-xs font-medium"><input type="checkbox" class="med-cond" value="10000" onchange="deepCalc()"> Chronic Kidney/Other</label>
+                        <label class="text-red-900 block mb-2">Chronic Conditions (Impact on Risk Pool)</label>
+                        <div class="grid grid-cols-2 gap-4 mt-2">
+                            <label class="checkbox-item"><input type="checkbox" class="med-cond" value="5000" onchange="deepCalc()"> Diabetes</label>
+                            <label class="checkbox-item"><input type="checkbox" class="med-cond" value="3000" onchange="deepCalc()"> Hypertension</label>
+                            <label class="checkbox-item"><input type="checkbox" class="med-cond" value="8000" onchange="deepCalc()"> Heart Condition</label>
+                            <label class="checkbox-item"><input type="checkbox" class="med-cond" value="10000" onchange="deepCalc()"> Chronic Kidney/Other</label>
                         </div>
                     </div>
                     <div class="grid md:grid-cols-2 gap-4">
@@ -92,16 +111,16 @@
                     <h2 class="text-lg font-bold text-orange-700 section-header">3. Parental Support Liability</h2>
                     <div class="grid md:grid-cols-2 gap-6">
                         <div class="p-4 bg-orange-50 rounded-xl border border-orange-100">
-                            <label>Father's Status</label>
-                            <div class="radio-group mb-2">
+                            <label class="block mb-1">Father's Status</label>
+                            <div class="radio-group mb-3">
                                 <label class="radio-item"><input type="radio" name="fatherAlive" value="yes" checked onchange="deepCalc()"> Alive</label>
                                 <label class="radio-item"><input type="radio" name="fatherAlive" value="no" onchange="deepCalc()"> No</label>
                             </div>
                             <input type="number" id="fatherAge" value="65" oninput="deepCalc()">
                         </div>
                         <div class="p-4 bg-orange-50 rounded-xl border border-orange-100">
-                            <label>Mother's Status</label>
-                            <div class="radio-group mb-2">
+                            <label class="block mb-1">Mother's Status</label>
+                            <div class="radio-group mb-3">
                                 <label class="radio-item"><input type="radio" name="motherAlive" value="yes" checked onchange="deepCalc()"> Alive</label>
                                 <label class="radio-item"><input type="radio" name="motherAlive" value="no" onchange="deepCalc()"> No</label>
                             </div>
@@ -109,16 +128,19 @@
                         </div>
                     </div>
                     <div class="mt-4 grid md:grid-cols-2 gap-4 border-t pt-4">
-                        <input type="number" id="parentMonthly" value="25000" placeholder="Monthly Support" oninput="deepCalc()">
-                        <input type="number" id="parentMedical" value="100000" placeholder="Annual Medical" oninput="deepCalc()">
+                        <div><label>Monthly Support (Both, ₹)</label><input type="number" id="parentMonthly" value="25000" oninput="deepCalc()"></div>
+                        <div><label>Annual Medical Buffer (₹)</label><input type="number" id="parentMedical" value="100000" oninput="deepCalc()"></div>
                     </div>
                 </div>
 
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                     <h2 class="text-lg font-bold text-blue-800 section-header">4. Housing Liability</h2>
-                    <div class="radio-group mb-4">
-                        <label class="radio-item"><input type="radio" name="planBuy" value="no" onchange="handleLiabilityBranch()"> Yes, I own it</label>
-                        <label class="radio-item"><input type="radio" name="planBuy" value="yes" checked onchange="handleLiabilityBranch()"> No, planning to buy</label>
+                    <div class="mb-4">
+                        <label class="block mb-1">Do you currently own a house?</label>
+                        <div class="radio-group">
+                            <label class="radio-item"><input type="radio" name="planBuy" value="no" onchange="handleLiabilityBranch()"> Yes, I own it</label>
+                            <label class="radio-item"><input type="radio" name="planBuy" value="yes" checked onchange="handleLiabilityBranch()"> No, planning to buy</label>
+                        </div>
                     </div>
 
                     <div id="futureHomeSection" class="p-5 bg-blue-50 rounded-xl space-y-4">
@@ -144,7 +166,7 @@
                     </div>
 
                     <div id="existingLoanSection" class="hidden p-5 bg-slate-50 rounded-xl border border-slate-200">
-                        <label>Is there an active loan?</label>
+                        <label class="block mb-1">Is there an active loan?</label>
                         <div class="radio-group mb-4">
                             <label class="radio-item"><input type="radio" name="isLoaned" value="yes" onchange="handleLoanToggle()"> Yes</label>
                             <label class="radio-item"><input type="radio" name="isLoaned" value="no" checked onchange="handleLoanToggle()"> No</label>
@@ -166,7 +188,7 @@
                         <div class="sub-section"><label>Emotional/Emergency Buffer for Siblings (₹)</label><input type="number" id="sibBuf" value="0" oninput="deepCalc()"></div>
                     </div>
                     <div class="border-t pt-4">
-                        <label>Immediate Children</label>
+                        <label class="block mb-2">Immediate Children</label>
                         <input type="number" id="numChildren" value="1" min="0" onchange="generateChildren()">
                         <div id="childContainer" class="mt-4 space-y-3"></div>
                     </div>
@@ -179,7 +201,7 @@
                         <div class="asset-row"><label>Mutual Funds/Equity (₹)</label><input type="number" id="assetMarket" value="0" oninput="deepCalc()"></div>
                         <div class="md:col-span-2 p-3 bg-blue-50 rounded-lg"><label>Existing Life Insurance Sum Assured (₹)</label><input type="number" id="currentLIC" value="0" oninput="deepCalc()"></div>
                         <div class="md:col-span-2 p-3 bg-green-50 rounded-lg">
-                            <label>Inheritance Expected (Amount & Years)</label>
+                            <label class="block mb-1">Inheritance Expected (Amount & Years)</label>
                             <div class="flex gap-2">
                                 <input type="number" id="inheritAmt" value="0" oninput="deepCalc()">
                                 <input type="number" id="inheritYrs" value="15" oninput="deepCalc()">
@@ -199,7 +221,6 @@
                     <div class="bg-white p-5 rounded-2xl border-2 border-red-100">
                         <h3 class="text-red-600 uppercase text-[10px] font-black tracking-widest">Medical "Wealth Drain"</h3>
                         <div id="medDrain" class="text-2xl font-bold text-slate-800">₹ 0</div>
-                        <p class="text-[9px] text-slate-400 mt-1">LIFETIME MAINTENANCE COST FORECAST</p>
                     </div>
 
                     <div class="gap-card text-white p-8 rounded-3xl shadow-xl border-b-8 border-red-900">
@@ -277,8 +298,8 @@
                 const r = (parseFloat(document.getElementById('loanInt').value) || 9) / 1200;
                 const tenure = (parseInt(document.getElementById('loanTenure').value) || 20) * 12;
                 const start = new Date(document.getElementById('loanStart').value + "-01");
-                const passed = Math.max(0, (new Date().getFullYear() - start.getFullYear()) * 12 + (new Date().getMonth() - start.getMonth()));
-                const left = tenure - passed;
+                const monthsPassed = Math.max(0, (new Date().getFullYear() - start.getFullYear()) * 12 + (new Date().getMonth() - start.getMonth()));
+                const left = tenure - monthsPassed;
                 if (r > 0 && left > 0) {
                     const emi = principal * r * Math.pow(1 + r, tenure) / (Math.pow(1 + r, tenure) - 1);
                     liability = emi * (Math.pow(1 + r, left) - 1) / (r * Math.pow(1 + r, left));

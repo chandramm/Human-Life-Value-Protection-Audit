@@ -19,7 +19,7 @@
         .asset-row { background-color: #f0fdf4; border: 1px solid #dcfce7; padding: 10px; border-radius: 8px; }
         .sub-section { background-color: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 10px; }
         .radio-group { display: flex; gap: 1.5rem; margin-top: 0.5rem; flex-wrap: wrap; }
-        .radio-item, .checkbox-item { display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.85rem; font-weight: 500; line-height: 1; }
+        .radio-item { display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.85rem; font-weight: 500; }
         input[type="radio"], input[type="checkbox"] { width: 1.1rem; height: 1.1rem; cursor: pointer; margin: 0; }
         @media print { .no-print { display: none !important; } }
     </style>
@@ -68,11 +68,11 @@
                     <h2 class="text-lg font-bold text-red-700 section-header">2. Health & Longevity Risk</h2>
                     <div class="risk-row mb-4">
                         <label class="text-red-900 block mb-2">Chronic Conditions</label>
-                        <div class="grid grid-cols-2 gap-4 mt-2">
-                            <label class="checkbox-item"><input type="checkbox" class="med-cond" value="5000" onchange="deepCalc()"> Diabetes</label>
-                            <label class="checkbox-item"><input type="checkbox" class="med-cond" value="3000" onchange="deepCalc()"> Hypertension</label>
-                            <label class="checkbox-item"><input type="checkbox" class="med-cond" value="8000" onchange="deepCalc()"> Heart Condition</label>
-                            <label class="checkbox-item"><input type="checkbox" class="med-cond" value="10000" onchange="deepCalc()"> Chronic Kidney/Other</label>
+                        <div class="grid grid-cols-2 gap-4">
+                            <label class="radio-item"><input type="checkbox" class="med-cond" value="5000" onchange="deepCalc()"> Diabetes</label>
+                            <label class="radio-item"><input type="checkbox" class="med-cond" value="3000" onchange="deepCalc()"> Hypertension</label>
+                            <label class="radio-item"><input type="checkbox" class="med-cond" value="8000" onchange="deepCalc()"> Heart Condition</label>
+                            <label class="radio-item"><input type="checkbox" class="med-cond" value="10000" onchange="deepCalc()"> Chronic Kidney/Other</label>
                         </div>
                     </div>
                     <div class="grid md:grid-cols-2 gap-4">
@@ -113,31 +113,47 @@
 
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                     <h2 class="text-lg font-bold text-blue-800 section-header">4. Housing Liability</h2>
-                    <div class="radio-group mb-4">
-                        <label class="radio-item"><input type="radio" name="planBuy" value="no" onchange="handleLiabilityBranch()"> Own it</label>
-                        <label class="radio-item"><input type="radio" name="planBuy" value="yes" checked onchange="handleLiabilityBranch()"> Plan to buy</label>
+                    <div class="mb-4">
+                        <label class="block mb-1">Do you currently own a house?</label>
+                        <div class="radio-group">
+                            <label class="radio-item"><input type="radio" name="planBuy" value="no" onchange="handleLiabilityBranch()"> Yes, I own it</label>
+                            <label class="radio-item"><input type="radio" name="planBuy" value="yes" checked onchange="handleLiabilityBranch()"> No, planning to buy</label>
+                        </div>
                     </div>
+
                     <div id="futureHomeSection" class="p-5 bg-blue-50 rounded-xl space-y-4">
                         <div class="grid md:grid-cols-2 gap-4">
-                            <select id="microSetting" onchange="deepCalc()">
-                                <option value="1.0">Urban</option>
-                                <option value="0.75">Semi-Urban</option>
-                                <option value="0.50">Rural</option>
-                            </select>
-                            <select id="propType" onchange="deepCalc()">
-                                <option value="5500000">2 BHK</option>
-                                <option value="10000000" selected>3 BHK / Villa</option>
-                                <option value="20000000">Luxury House</option>
-                            </select>
+                            <div>
+                                <label>Micro-Setting</label>
+                                <select id="microSetting" onchange="deepCalc()">
+                                    <option value="1.0">Urban (City Center)</option>
+                                    <option value="0.75">Semi-Urban</option>
+                                    <option value="0.50">Rural</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label>Property Type</label>
+                                <select id="propType" onchange="deepCalc()">
+                                    <option value="5500000">Compact 2 BHK</option>
+                                    <option value="10000000" selected>Standard 3 BHK / Villa</option>
+                                    <option value="20000000">Luxury House</option>
+                                </select>
+                            </div>
                         </div>
-                        <input type="number" id="buyInYears" value="5" placeholder="Years" oninput="deepCalc()">
+                        <input type="number" id="buyInYears" value="5" placeholder="Purchase in how many years?" oninput="deepCalc()">
                     </div>
+
                     <div id="existingLoanSection" class="hidden p-5 bg-slate-50 rounded-xl border border-slate-200">
-                        <div id="loanFields" class="grid md:grid-cols-2 gap-4">
-                            <input type="number" id="loanPrincipal" value="5000000" placeholder="Loan Amount">
-                            <input type="number" id="loanInt" value="9.0" placeholder="Interest %">
-                            <input type="number" id="loanTenure" value="20" placeholder="Tenure">
-                            <input type="month" id="loanStart" value="2022-01">
+                        <label class="block mb-1">Is there an active loan?</label>
+                        <div class="radio-group mb-4">
+                            <label class="radio-item"><input type="radio" name="isLoaned" value="yes" onchange="handleLoanToggle()"> Yes</label>
+                            <label class="radio-item"><input type="radio" name="isLoaned" value="no" checked onchange="handleLoanToggle()"> No</label>
+                        </div>
+                        <div id="loanFields" class="hidden grid md:grid-cols-2 gap-4 border-t pt-4">
+                            <input type="number" id="loanPrincipal" value="5000000" placeholder="Original Loan Amount" oninput="deepCalc()">
+                            <input type="number" id="loanInt" value="9.0" placeholder="Current Interest %" oninput="deepCalc()">
+                            <input type="number" id="loanTenure" value="20" placeholder="Total Tenure (Years)" oninput="deepCalc()">
+                            <input type="month" id="loanStart" value="2022-01" oninput="deepCalc()">
                         </div>
                     </div>
                 </div>
@@ -147,25 +163,15 @@
                     <div class="space-y-3">
                         <div class="sub-section"><label>Sibling Marriage Provision (₹)</label><input type="number" id="sibMarriage" value="0" oninput="deepCalc()"></div>
                         <div class="sub-section"><label>Sibling Education Support (₹)</label><input type="number" id="sibEdu" value="0" oninput="deepCalc()"></div>
-                        <div class="sub-section"><label>Emotional/Emergency Buffer (₹)</label><input type="number" id="sibBuf" value="0" oninput="deepCalc()"></div>
+                        <div class="sub-section"><label>Emergency Buffer for Siblings (₹)</label><input type="number" id="sibBuf" value="0" oninput="deepCalc()"></div>
                     </div>
-                </div>
-
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                    <h2 class="text-lg font-bold text-blue-900 section-header">6. Immediate Family Support</h2>
-                    <div class="mb-4">
-                        <label>Marital Status</label>
-                        <select id="maritalStatus" onchange="toggleMarriedSection()">
-                            <option value="married" selected>Married</option>
-                            <option value="single">Single</option>
-                        </select>
-                    </div>
+                    <h2 class="text-lg font-bold text-blue-900 section-header mt-8">6. Immediate Family</h2>
+                    <select id="maritalStatus" onchange="toggleMarriedSection()" class="mb-4">
+                        <option value="married" selected>Married</option>
+                        <option value="single">Single</option>
+                    </select>
                     <div id="marriedGroup" class="p-5 bg-blue-50 rounded-xl space-y-4">
-                        <div>
-                            <label>Spouse Monthly Take-Home Income (₹)</label>
-                            <input type="number" id="spouseIncome" value="0" oninput="deepCalc()">
-                            <p class="text-[10px] text-blue-600 italic mt-1">*Spouse income reduces the total protection gap requirement.</p>
-                        </div>
+                        <input type="number" id="spouseIncome" value="0" placeholder="Spouse Monthly Income (₹)" oninput="deepCalc()">
                         <div>
                             <label>No. of Children</label>
                             <input type="number" id="numChildren" value="1" min="0" onchange="generateChildren()">
@@ -175,16 +181,16 @@
                 </div>
 
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                    <h2 class="text-lg font-bold text-green-700 section-header">7. Financial Assets & Inheritance</h2>
+                    <h2 class="text-lg font-bold text-green-700 section-header">7. Assets & Inheritance</h2>
                     <div class="grid md:grid-cols-2 gap-4">
                         <div class="asset-row"><label>Bank/PO/Gold (₹)</label><input type="number" id="assetLiquid" value="0" oninput="deepCalc()"></div>
                         <div class="asset-row"><label>Mutual Funds/Equity (₹)</label><input type="number" id="assetMarket" value="0" oninput="deepCalc()"></div>
-                        <div class="md:col-span-2 p-3 bg-blue-50 rounded-lg"><label>Existing Life Cover (₹)</label><input type="number" id="currentLIC" value="0" oninput="deepCalc()"></div>
+                        <div class="md:col-span-2 p-3 bg-blue-50 rounded-lg"><label>Existing Life Cover Sum Assured (₹)</label><input type="number" id="currentLIC" value="0" oninput="deepCalc()"></div>
                         <div class="md:col-span-2 p-3 bg-green-50 rounded-lg">
-                            <label>Inheritance Expected</label>
+                            <label>Inheritance Amount & Timeline (Yrs)</label>
                             <div class="flex gap-2">
-                                <input type="number" id="inheritAmt" value="0" placeholder="Amount" oninput="deepCalc()">
-                                <input type="number" id="inheritYrs" value="15" placeholder="Years" oninput="deepCalc()">
+                                <input type="number" id="inheritAmt" value="0" oninput="deepCalc()">
+                                <input type="number" id="inheritYrs" value="15" oninput="deepCalc()">
                             </div>
                         </div>
                     </div>
@@ -204,12 +210,10 @@
                     <div class="gap-card text-white p-8 rounded-3xl shadow-xl border-b-8 border-red-900">
                         <h3 class="text-red-200 uppercase text-xs font-black tracking-widest">Recommended Net Cover</h3>
                         <div id="totalGap" class="text-5xl font-black mb-4 tracking-tighter">₹ 0</div>
-                        <p class="text-red-100 text-xs opacity-90 italic">Gap Assessment by Chandramohan.</p>
+                        <p class="text-red-100 text-xs opacity-90 italic">Audit by Chandramohan (9791004920).</p>
                     </div>
-                    <div class="bg-white p-6 rounded-2xl border shadow-md text-center no-print">
-                        <p class="text-lg font-black text-blue-900">Chandramohan</p>
-                        <p class="text-sm font-bold text-slate-700 mb-4">9791004920</p>
-                        <a href="https://wa.me/919791004920?text=Hi%20Chandramohan,%20I%20have%20completed%20the%20HLV%20Audit." class="inline-block w-full bg-green-600 text-white py-3 rounded-xl font-bold hover:bg-green-700 transition">Discuss on WhatsApp</a>
+                    <div class="bg-white p-4 rounded-xl text-center no-print border shadow-sm">
+                        <a href="https://wa.me/919791004920?text=Hi%20Chandramohan,%20I%20have%20completed%20the%20HLV%20Audit." class="inline-block w-full bg-green-600 text-white py-3 rounded-xl font-bold hover:bg-green-700">Discuss on WhatsApp</a>
                     </div>
                 </div>
             </div>
@@ -223,6 +227,12 @@
             const planBuy = document.querySelector('input[name="planBuy"]:checked').value;
             document.getElementById('futureHomeSection').classList.toggle('hidden', planBuy === 'no');
             document.getElementById('existingLoanSection').classList.toggle('hidden', planBuy === 'yes');
+            deepCalc();
+        }
+
+        function handleLoanToggle() {
+            const isLoaned = document.querySelector('input[name="isLoaned"]:checked').value;
+            document.getElementById('loanFields').classList.toggle('hidden', isLoaned === 'no');
             deepCalc();
         }
 
@@ -249,9 +259,8 @@
             const cityMult = parseFloat(document.getElementById('cityTier').value);
             const gInf = 0.06, roi = 0.08, realRate = (roi - gInf) / (1 + gInf);
 
-            // 1. Income Replacement (70% of combined income needed, minus spouse's contribution)
-            let combinedNeed = (income + sIncome) * 12 * 0.7;
-            let replacementNeeded = Math.max(0, combinedNeed - (sIncome * 12)); 
+            // 1. Income Replacement (Net of Spouse Contribution)
+            let replacementNeeded = Math.max(0, ((income + sIncome) * 12 * 0.7) - (sIncome * 12)); 
             let hlvIncome = replacementNeeded * ((1 - Math.pow(1 + realRate, -(60 - age))) / realRate);
 
             // 2. Parents
@@ -264,14 +273,15 @@
                 parentFund = ((parseFloat(document.getElementById('parentMonthly').value) || 0) * 12 * mult * ((1 - Math.pow(1 + realRate, -(85 - pAge))) / realRate));
             }
 
-            // 3. Housing
+            // 3. Housing (FULL RESTORED MATH)
             let liability = 0;
             const planBuy = document.querySelector('input[name="planBuy"]:checked').value;
             if (planBuy === 'yes') {
                 const base = parseFloat(document.getElementById('propType').value);
                 const micro = parseFloat(document.getElementById('microSetting').value);
-                liability = (base * cityMult * micro) * Math.pow(1.06, parseInt(document.getElementById('buyInYears').value) || 0) * 0.8;
-            } else {
+                const years = parseInt(document.getElementById('buyInYears').value) || 0;
+                liability = (base * cityMult * micro) * Math.pow(1.06, years) * 0.8;
+            } else if (document.querySelector('input[name="isLoaned"]:checked').value === 'yes') {
                 const principal = parseFloat(document.getElementById('loanPrincipal').value) || 0;
                 const r = (parseFloat(document.getElementById('loanInt').value) || 9) / 1200;
                 const tenure = (parseInt(document.getElementById('loanTenure').value) || 20) * 12;
@@ -284,7 +294,7 @@
                 }
             }
 
-            // 4. Children, Siblings, Med Drain
+            // 4. Family Commitments
             let eduCorpus = 0;
             document.querySelectorAll('.c-age').forEach((el) => {
                 let yTo18 = 18 - parseInt(el.value);

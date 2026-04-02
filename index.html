@@ -414,7 +414,16 @@
             if (fAlive || mAlive) {
                 const mult = (fAlive && mAlive) ? 1.0 : 0.6;
                 const pAge = Math.max(fAlive ? parseInt(document.getElementById('fatherAge').value) : 0, mAlive ? parseInt(document.getElementById('motherAge').value) : 0);
-                parentFund = ((parseFloat(document.getElementById('parentMonthly').value) || 0) * 12 * mult * ((1 - Math.pow(1 + realRate, -(85 - pAge))) / realRate));
+                const years = Math.max(0, 85 - pAge);
+                
+                const livingCost = (parseFloat(document.getElementById('parentMonthly').value) || 0) * 12 * mult;
+                const medicalCost = (parseFloat(document.getElementById('parentMedical').value) || 0) * mult;
+                
+                // Living cost uses standard inflation (realRate), Medical uses medical inflation (medRealRate)
+                const livingPV = livingCost > 0 ? (livingCost * ((1 - Math.pow(1 + realRate, -years)) / realRate)) : 0;
+                const medicalPV = medicalCost > 0 ? (medicalCost * ((1 - Math.pow(1 + medRealRate, -years)) / medRealRate)) : 0;
+                
+                parentFund = livingPV + medicalPV;
             }
 
             // 3. Housing

@@ -78,16 +78,16 @@
                     </div>
                     <div class="gap-4">
                         <div>
-                            <span class="input-caption">Other Monthly Med. Spend (₹)</span>
-                            <input type="number" id="monthlyMedSpend" value="0" oninput="deepCalc()">
-                        </div>
-                        <div>
                             <span class="input-caption">Longevity History</span>
                             <select id="longevityFactor" onchange="deepCalc()">
                                 <option value="1.0">Average (75-80 Yrs)</option>
                                 <option value="1.2">Early Illness History</option>
                                 <option value="0.9">High (85+ History)</option>
                             </select>
+                        </div>
+                         <div>
+                            <span class="input-caption">Other Monthly Med. Spend (₹)</span>
+                            <input type="number" id="monthlyMedSpend" value="0" oninput="deepCalc()">
                         </div>
                     </div>
                 </div>

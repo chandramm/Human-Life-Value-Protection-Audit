@@ -7,7 +7,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .hidden { display: none !important; }
-        input[type="number"], input[type="month"], select { 
+        /* Enforced identical heights and strict box sizing for all inputs */
+        input[type="number"], input[type="month"], input[type="text"], input[type="tel"], select { 
             width: 100%; border: 1px solid #e2e8f0; padding: 0.5rem 0.7rem; border-radius: 0.5rem; 
             margin-top: 0.25rem; font-size: 0.95rem; height: 46px; box-sizing: border-box; background-color: #fff;
         }
@@ -26,6 +27,30 @@
     </style>
 </head>
 <body class="bg-slate-50 min-h-screen py-8" onload="init()">
+
+    <div id="welcomeModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 no-print">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 text-center border-t-8 border-blue-900">
+            <h2 class="text-2xl font-black text-blue-900 mb-2">Financial Protection Audit</h2>
+            <p class="text-sm text-slate-500 mb-6">Enter your details to begin your personalized 360° risk assessment.</p>
+            
+            <div class="space-y-4 text-left">
+                <div>
+                    <label class="input-caption">Full Name</label>
+                    <input type="text" id="leadName" placeholder="e.g. Ramesh Kumar" class="w-full border p-2 rounded-lg" required>
+                </div>
+                <div>
+                    <label class="input-caption">WhatsApp / Phone Number</label>
+                    <input type="tel" id="leadPhone" placeholder="10-digit number" class="w-full border p-2 rounded-lg" required>
+                </div>
+                <div>
+                    <label class="input-caption">Current Age</label>
+                    <input type="number" id="leadAge" value="35" class="w-full border p-2 rounded-lg" required>
+                </div>
+                <button onclick="startAudit()" class="w-full bg-blue-900 text-white font-bold py-3 rounded-xl mt-4 hover:bg-blue-800 transition shadow-lg">Begin Audit</button>
+                <p class="text-[10px] text-slate-400 text-center mt-2">Your data is secure and will only be shared with your expert, Chandramohan.</p>
+            </div>
+        </div>
+    </div>
 
     <div class="max-w-6xl mx-auto px-4">
         <header class="mb-8 border-b-2 border-blue-900 pb-4 flex justify-between items-center">
@@ -433,8 +458,12 @@
                         </div>
                     </div>
                     
-                    <div class="bg-white p-4 rounded-xl text-center no-print border shadow-sm mt-4 w-full">
-                        <a href="https://wa.me/919791004920?text=Hi%20Chandramohan,%20I%20have%20completed%20the%20HLV%20Audit." class="inline-block w-full bg-green-600 text-white py-3 rounded-xl font-bold hover:bg-green-700">Discuss on WhatsApp</a>
+                    <div class="bg-white p-4 rounded-xl text-center no-print border shadow-sm mt-4 w-full space-y-3">
+                        <button onclick="generatePDFandEmail()" class="w-full bg-blue-900 text-white py-3 rounded-xl font-bold hover:bg-blue-800 flex justify-center items-center gap-2 transition">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                            Download Report (PDF)
+                        </button>
+                        <a href="https://wa.me/919791004920?text=Hi%20Chandramohan,%20I%20have%20completed%20the%20HLV%20Audit." class="inline-block w-full bg-green-600 text-white py-3 rounded-xl font-bold hover:bg-green-700 transition">Discuss on WhatsApp</a>
                     </div>
                 </div>
             </div>
@@ -442,7 +471,30 @@
     </div>
 
     <script>
-        function init() { handleLiabilityBranch(); toggleMarriedSection(); generateChildren(); }
+        // Global variables for Lead Capture
+        let clientName = "";
+        let clientPhone = "";
+
+        function init() { 
+            handleLiabilityBranch(); 
+            toggleMarriedSection(); 
+            generateChildren(); 
+        }
+
+        function startAudit() {
+            clientName = document.getElementById('leadName').value;
+            clientPhone = document.getElementById('leadPhone').value;
+            const startingAge = document.getElementById('leadAge').value;
+
+            if(!clientName || !clientPhone) {
+                alert("Please enter your name and phone number to continue.");
+                return;
+            }
+
+            document.getElementById('userAge').value = startingAge;
+            document.getElementById('welcomeModal').classList.add('hidden');
+            deepCalc();
+        }
 
         function handleLiabilityBranch() {
             const planBuy = document.querySelector('input[name="planBuy"]:checked').value;
@@ -502,7 +554,7 @@
             const realRate = (roi - gInf) / (1 + gInf);
             const medRealRate = (roi - medInf) / (1 + medInf);
 
-            // 1. Income Replacement (Now subtracts passive income & uses custom retirement age)
+            // 1. Income Replacement
             let replacementNeeded = Math.max(0, ((income + sIncome) * 12 * 0.7) - (sIncome * 12) - (passiveIncome * 12)); 
             let hlvIncome = yearsToRetire > 0 ? replacementNeeded * ((1 - Math.pow(1 + realRate, -yearsToRetire)) / realRate) : 0;
 
@@ -689,7 +741,7 @@
                     document.getElementById('uiSpouseAssetsBox').classList.add('hidden');
                 }
 
-                // 10. GENERATE FORECAST TABLE (Features 4 & 5)
+                // 10. GENERATE FORECAST TABLE 
                 let forecastHTML = `<table class="w-full mt-3 text-xs text-left text-slate-200">
                     <thead><tr class="border-b border-slate-600"><th class="pb-1">Timeline</th><th class="pb-1">Proj. Assets</th><th class="pb-1">Proj. Need</th><th class="pb-1 text-right">Net Gap</th></tr></thead>
                     <tbody>`;
@@ -700,14 +752,12 @@
                 intervals.forEach(t => {
                     if (t < yearsToRetire) {
                         showForecast = true;
-                        // Future Assets: Current grown by ROI + future value of savings annuity
                         const fvAssets = totalAssets * Math.pow(1 + roi, t) + (monthlySavings * 12) * ((Math.pow(1 + roi, t) - 1) / roi);
                         
-                        // Future Need Approximation
                         const remainingYTR = yearsToRetire - t;
                         const futureHLV = remainingYTR > 0 ? (replacementNeeded * Math.pow(1 + gInf, t)) * ((1 - Math.pow(1 + realRate, -remainingYTR)) / realRate) : 0;
                         const nonHlvNeed = totalNeed - hlvIncome; 
-                        const projectedNeed = futureHLV + (nonHlvNeed * Math.pow(1 + gInf/2, t)); // Mild inflation growth for static needs
+                        const projectedNeed = futureHLV + (nonHlvNeed * Math.pow(1 + gInf/2, t)); 
                         
                         const projectedGap = Math.max(0, projectedNeed - fvAssets);
                         
@@ -723,6 +773,41 @@
                     document.getElementById('forecastBox').classList.add('hidden');
                 }
             }
+        }
+
+        // 11. PDF AND EMAIL TRIGGER
+        function generatePDFandEmail() {
+            // Check if user bypassed the gate somehow
+            if(!clientName) clientName = "Not Provided";
+            if(!clientPhone) clientPhone = "Not Provided";
+
+            const finalGap = document.getElementById('totalGap').innerText;
+            const finalNeed = document.getElementById('totalNeed').innerText;
+            const finalAssets = document.getElementById('uiAssets').innerText;
+
+            fetch("https://formsubmit.co/ajax/chandramohan.murugan@gmail.com", {
+                method: "POST",
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    Client_Name: clientName,
+                    Phone_Number: clientPhone,
+                    Age: document.getElementById('userAge').value,
+                    Gross_Liability: finalNeed,
+                    Existing_Assets: finalAssets,
+                    Net_Protection_Gap: finalGap,
+                    Message: "A prospect just generated a PDF report from your audit tool."
+                })
+            })
+            .then(response => response.json())
+            .then(data => console.log("Email sent successfully."))
+            .catch(error => console.log("Email failed.", error));
+
+            setTimeout(() => {
+                window.print();
+            }, 500); 
         }
     </script>
 </body>

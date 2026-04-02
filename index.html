@@ -43,7 +43,7 @@
                 
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                     <h2 class="text-lg font-bold text-blue-800 section-header">1. Income & Regional Profile</h2>
-                    <div class="grid md:grid-cols-2 gap-4">
+                    <div class="grid gap-4">
                         <div>
                             <label>City Category</label>
                             <select id="cityTier" onchange="deepCalc()">
@@ -57,7 +57,7 @@
                             <label>Your Current Age</label>
                             <input type="number" id="userAge" value="35" oninput="deepCalc()">
                         </div>
-                        <div class="md:col-span-2">
+                        <div>
                             <label>Monthly Take-Home Income (₹)</label>
                             <input type="number" id="userIncome" value="100000" oninput="deepCalc()">
                         </div>

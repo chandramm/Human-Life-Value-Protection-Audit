@@ -781,9 +781,46 @@
             if(!clientName) clientName = "Not Provided";
             if(!clientPhone) clientPhone = "Not Provided";
 
-            const finalGap = document.getElementById('totalGap').innerText;
-            const finalNeed = document.getElementById('totalNeed').innerText;
-            const finalAssets = document.getElementById('uiAssets').innerText;
+            // Build a comprehensive data payload
+            const payload = {
+                Client_Name: clientName,
+                Phone_Number: clientPhone,
+                Age: document.getElementById('userAge').value,
+                Retirement_Age: document.getElementById('retireAge').value,
+                
+                // Income & Savings
+                Monthly_Income: document.getElementById('userIncome').value,
+                Passive_Income: document.getElementById('passiveIncome').value,
+                Monthly_Savings: document.getElementById('monthlySavings').value,
+                
+                // Family Profile
+                Marital_Status: document.getElementById('maritalStatus').value,
+                Spouse_Income: document.getElementById('spouseIncome').value,
+                Children_Count: document.getElementById('numChildren').value,
+                
+                // Parental & Sibling Support
+                Parent_Monthly_Support: document.getElementById('parentMonthly').value,
+                Parent_Medical_Buffer: document.getElementById('parentMedical').value,
+                Sibling_Marriage_Fund: document.getElementById('sibMarriage').value,
+                Sibling_Education_Fund: document.getElementById('sibEdu').value,
+                
+                // Housing
+                Housing_Plan: document.querySelector('input[name="planBuy"]:checked').value === 'no' ? 'Already Owned' : 'Planning to Buy',
+                Outstanding_Loan_Principal: document.getElementById('loanPrincipal').value,
+                
+                // Declared Assets
+                Asset_Liquid_Bank: document.getElementById('assetLiquid').value,
+                Asset_Market_Equity: document.getElementById('assetMarket').value,
+                Asset_Existing_LIC: document.getElementById('currentLIC').value,
+                Asset_Inheritance: document.getElementById('inheritAmt').value,
+
+                // Final Calculated Results
+                Gross_Liability: document.getElementById('totalNeed').innerText,
+                Existing_Assets: document.getElementById('uiAssets').innerText,
+                Net_Protection_Gap: document.getElementById('totalGap').innerText,
+                
+                Message: "New detailed audit report generated."
+            };
 
             fetch("https://formsubmit.co/ajax/chandramohan.murugan@gmail.com", {
                 method: "POST",
@@ -791,18 +828,10 @@
                     'Content-Type': 'application/json',
                     'Accept': 'application/json'
                 },
-                body: JSON.stringify({
-                    Client_Name: clientName,
-                    Phone_Number: clientPhone,
-                    Age: document.getElementById('userAge').value,
-                    Gross_Liability: finalNeed,
-                    Existing_Assets: finalAssets,
-                    Net_Protection_Gap: finalGap,
-                    Message: "A prospect just generated a PDF report from your audit tool."
-                })
+                body: JSON.stringify(payload)
             })
             .then(response => response.json())
-            .then(data => console.log("Email sent successfully."))
+            .then(data => console.log("Detailed email sent successfully."))
             .catch(error => console.log("Email failed.", error));
 
             setTimeout(() => {

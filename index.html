@@ -65,25 +65,31 @@
                 </div>
 
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                    <h2 class="text-lg font-bold text-red-700 section-header">2. Health & Longevity Risk</h2>
-                    <div class="risk-row mb-4">
-                        <label class="text-red-900 block mb-2">Chronic Conditions</label>
-                        <div class="grid grid-cols-2 gap-4">
-                            <label class="radio-item"><input type="checkbox" class="med-cond" value="5000" onchange="deepCalc()"> Diabetes</label>
-                            <label class="radio-item"><input type="checkbox" class="med-cond" value="3000" onchange="deepCalc()"> Hypertension</label>
-                            <label class="radio-item"><input type="checkbox" class="med-cond" value="8000" onchange="deepCalc()"> Heart Condition</label>
-                            <label class="radio-item"><input type="checkbox" class="med-cond" value="10000" onchange="deepCalc()"> Chronic Kidney/Other</label>
-                        </div>
-                    </div>
-                    <div class="grid md:grid-cols-2 gap-4">
-                        <input type="number" id="monthlyMedSpend" value="0" placeholder="Other Med. Spend" oninput="deepCalc()">
-                        <select id="longevityFactor" onchange="deepCalc()">
-                            <option value="1.0">Avg Longevity</option>
-                            <option value="1.2">Low Longevity History</option>
-                            <option value="0.9">High Longevity History</option>
-                        </select>
-                    </div>
-                </div>
+    			<h2 class="text-lg font-bold text-red-700 section-header">2. Health & Longevity Risk</h2>
+    			<div class="risk-row mb-4">
+        			<label class="text-red-900 block mb-2">Chronic Conditions (Impact on Risk Pool)</label>
+        			<div class="grid grid-cols-2 gap-4 mt-2">
+            				<label class="checkbox-item"><input type="checkbox" class="med-cond" value="5000" onchange="deepCalc()"> Diabetes</label>
+            				<label class="checkbox-item"><input type="checkbox" class="med-cond" value="3000" onchange="deepCalc()"> Hypertension</label>
+            				<label class="checkbox-item"><input type="checkbox" class="med-cond" value="8000" onchange="deepCalc()"> Heart Condition</label>
+            				<label class="checkbox-item"><input type="checkbox" class="med-cond" value="10000" onchange="deepCalc()"> Chronic Kidney/Other</label>
+        			</div>
+    			</div>
+    			<div class="grid md:grid-cols-2 gap-4">
+        			<div>
+            				<label>Other Monthly Med. Spend (₹)</label>
+            				<input type="number" id="monthlyMedSpend" value="0" oninput="deepCalc()">
+        			</div>
+        			<div>
+            				<label>Longevity History</label>
+            				<select id="longevityFactor" onchange="deepCalc()">
+                				<option value="1.0">Average (75-80 Yrs)</option>
+                				<option value="1.2">Early Illness History</option>
+                				<option value="0.9">High (85+ History)</option>
+            				</select>
+        			</div>
+    			</div>
+		</div>
 
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                     <h2 class="text-lg font-bold text-orange-700 section-header">3. Parental Support Liability</h2>
@@ -165,20 +171,29 @@
                         <div class="sub-section"><label>Sibling Education Support (₹)</label><input type="number" id="sibEdu" value="0" oninput="deepCalc()"></div>
                         <div class="sub-section"><label>Emergency Buffer for Siblings (₹)</label><input type="number" id="sibBuf" value="0" oninput="deepCalc()"></div>
                     </div>
-                    <h2 class="text-lg font-bold text-blue-900 section-header mt-8">6. Immediate Family</h2>
-                    <select id="maritalStatus" onchange="toggleMarriedSection()" class="mb-4">
-                        <option value="married" selected>Married</option>
-                        <option value="single">Single</option>
-                    </select>
-                    <div id="marriedGroup" class="p-5 bg-blue-50 rounded-xl space-y-4">
-                        <input type="number" id="spouseIncome" value="0" placeholder="Spouse Monthly Income (₹)" oninput="deepCalc()">
-                        <div>
-                            <label>No. of Children</label>
-                            <input type="number" id="numChildren" value="1" min="0" onchange="generateChildren()">
-                            <div id="childContainer" class="mt-4 space-y-3"></div>
-                        </div>
-                    </div>
-                </div>
+		</div>
+		<div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+    			<h2 class="text-lg font-bold text-blue-900 section-header">6. Immediate Family Support</h2>
+    			<div class="mb-4">
+        			<label>Marital Status</label>
+        			<select id="maritalStatus" onchange="toggleMarriedSection()">
+            				<option value="married" selected>Married</option>
+            				<option value="single">Single</option>
+        			</select>
+    			</div>
+    			<div id="marriedGroup" class="p-5 bg-blue-50 rounded-xl space-y-4">
+        			<div>
+            				<label>Spouse Monthly Take-Home Income (₹)</label>
+            				<input type="number" id="spouseIncome" value="0" oninput="deepCalc()">
+            				<p class="text-[10px] text-blue-600 italic mt-1">*Spouse income reduces the total protection gap requirement.</p>
+        			</div>
+        			<div>
+            				<label>No. of Children</label>
+            				<input type="number" id="numChildren" value="1" min="0" onchange="generateChildren()">
+            				<div id="childContainer" class="mt-4 space-y-3"></div>
+        			</div>
+    			</div>
+		</div>
 
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                     <h2 class="text-lg font-bold text-green-700 section-header">7. Assets & Inheritance</h2>
@@ -261,7 +276,7 @@
 
             // 1. Income Replacement (Net of Spouse Contribution)
             let replacementNeeded = Math.max(0, ((income + sIncome) * 12 * 0.7) - (sIncome * 12)); 
-            let hlvIncome = replacementNeeded * ((1 - Math.pow(1 + realRate, -(60 - age))) / realRate);
+	    let hlvIncome = replacementNeeded * ((1 - Math.pow(1 + realRate, -(60 - age))) / realRate);
 
             // 2. Parents
             let parentFund = 0;
@@ -302,9 +317,10 @@
             });
             const sibTotal = (parseFloat(document.getElementById('sibMarriage').value) || 0) + (parseFloat(document.getElementById('sibEdu').value) || 0) + (parseFloat(document.getElementById('sibBuf').value) || 0);
             
-            let monthlyMed = 0;
-            document.querySelectorAll('.med-cond:checked').forEach(c => monthlyMed += parseFloat(c.value));
-            const medDrain = (monthlyMed * 12) * ((1 - Math.pow(1 + (roi - 0.10) / 1.10, -(60 - age))) / ((roi - 0.10) / 1.10));
+	    let monthlyMed = parseFloat(document.getElementById('monthlyMedSpend').value) || 0;
+            document.querySelectorAll('.med-cond:checked').forEach(c => {monthlyMed += parseFloat(c.value);});
+	    const medRealRate = (roi - 0.10) / 1.10;
+	    const medDrain = (monthlyMed * 12) * ((1 - Math.pow(1 + medRealRate, -(60 - age))) / medRealRate);
 
             // 5. Assets Deduction
             const totalAssets = (parseFloat(document.getElementById('assetLiquid').value) || 0) + (parseFloat(document.getElementById('assetMarket').value) || 0) + (parseFloat(document.getElementById('currentLIC').value) || 0) + ((parseFloat(document.getElementById('inheritAmt').value) || 0) / Math.pow(1.08, parseInt(document.getElementById('inheritYrs').value) || 1));

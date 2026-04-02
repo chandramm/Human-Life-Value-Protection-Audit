@@ -305,21 +305,42 @@
                             <h3 class="text-blue-200 uppercase text-[10px] font-black tracking-widest mb-1">Gross Family Liability</h3>
                             <div id="totalNeed" class="text-4xl font-black mb-3">₹ 0</div>
                             
-                            <div class="space-y-2 mt-4 pt-4 border-t border-blue-400">
-                                <div class="flex justify-between text-xs text-blue-100">
-                                    <span>Income Replacement</span><span id="uiIncome" class="font-bold text-white">₹ 0</span>
+                            <div class="space-y-3 mt-4 pt-4 border-t border-blue-400/50">
+                                <div class="flex justify-between text-xs text-blue-50">
+                                    <span class="font-bold">Income Replacement</span><span id="uiIncome" class="font-bold">₹ 0</span>
                                 </div>
-                                <div class="flex justify-between text-xs text-blue-100">
-                                    <span>Parental Support</span><span id="uiParent" class="font-bold text-white">₹ 0</span>
+                                
+                                <div>
+                                    <div class="flex justify-between text-xs text-blue-50">
+                                        <span class="font-bold">Parental Support</span><span id="uiParent" class="font-bold">₹ 0</span>
+                                    </div>
+                                    <div class="flex justify-between text-[10px] text-blue-200 mt-0.5 pl-2">
+                                        <span>Living: <span id="uiParentLiv">₹0</span></span>
+                                        <span>Med Buffer: <span id="uiParentMed">₹0</span></span>
+                                    </div>
                                 </div>
-                                <div class="flex justify-between text-xs text-blue-100">
-                                    <span>Housing Liability</span><span id="uiHouse" class="font-bold text-white">₹ 0</span>
+                                
+                                <div class="flex justify-between text-xs text-blue-50">
+                                    <span class="font-bold">Housing Liability</span><span id="uiHouse" class="font-bold">₹ 0</span>
                                 </div>
-                                <div class="flex justify-between text-xs text-blue-100">
-                                    <span>Children's Provision</span><span id="uiChild" class="font-bold text-white">₹ 0</span>
+                                
+                                <div>
+                                    <div class="flex justify-between text-xs text-blue-50">
+                                        <span class="font-bold">Children's Provision</span><span id="uiChild" class="font-bold">₹ 0</span>
+                                    </div>
+                                    <div class="flex justify-between text-[10px] text-blue-200 mt-0.5 pl-2">
+                                        <span>Education: <span id="uiChildEdu">₹0</span></span>
+                                        <span>Milestones/Med: <span id="uiChildMstone">₹0</span></span>
+                                    </div>
                                 </div>
-                                <div class="flex justify-between text-xs text-blue-100">
-                                    <span>Sibling Support</span><span id="uiSib" class="font-bold text-white">₹ 0</span>
+                                
+                                <div>
+                                    <div class="flex justify-between text-xs text-blue-50">
+                                        <span class="font-bold">Sibling Support</span><span id="uiSib" class="font-bold">₹ 0</span>
+                                    </div>
+                                    <div class="flex justify-between text-[10px] text-blue-200 mt-0.5 pl-2">
+                                        <span>Mar: <span id="uiSibMar">₹0</span> | Edu: <span id="uiSibEdu">₹0</span> | Buf: <span id="uiSibBuf">₹0</span></span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -331,9 +352,17 @@
                         </div>
 
                         <div class="bg-white p-5 rounded-2xl border-2 border-green-100 w-full">
-                            <h3 class="text-green-600 uppercase text-[10px] font-black tracking-widest">Identified Assets (Deductions)</h3>
-                            <div id="uiAssets" class="text-2xl font-bold text-slate-800">₹ 0</div>
-                            <p id="uiSpouseAssets" class="text-[10px] text-slate-500 mt-1 italic hidden"></p>
+                            <h3 class="text-green-600 uppercase text-[10px] font-black tracking-widest mb-2">Identified Assets (Deductions)</h3>
+                            <div id="uiAssets" class="text-2xl font-bold text-slate-800 mb-3">₹ 0</div>
+                            
+                            <div class="space-y-1.5 border-t border-green-200 pt-3 text-[10px] text-slate-600 font-medium">
+                                <div class="flex justify-between"><span>Liquid & Market Assets:</span><span id="uiAssetLiquid">₹0</span></div>
+                                <div class="flex justify-between"><span>Existing Life Cover:</span><span id="uiAssetLic">₹0</span></div>
+                                <div class="flex justify-between"><span>Inheritance (Present Value):</span><span id="uiAssetInherit">₹0</span></div>
+                                <div id="uiSpouseAssetsBox" class="flex justify-between hidden text-green-700 font-bold border-t border-green-100 pt-1.5 mt-1.5">
+                                    <span>Spouse EPF & Insurance (PV):</span><span id="uiAssetSpouse">₹0</span>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="gap-card text-white p-8 rounded-3xl shadow-xl border-b-8 border-red-900 w-full">
@@ -455,6 +484,8 @@
 
             // 2. Parents
             let parentFund = 0;
+            let livingPV = 0;
+            let medicalPV = 0;
             const fAlive = document.querySelector('input[name="fatherAlive"]:checked').value === 'yes';
             const mAlive = document.querySelector('input[name="motherAlive"]:checked').value === 'yes';
             if (fAlive || mAlive) {
@@ -465,8 +496,8 @@
                 const livingCost = (parseFloat(document.getElementById('parentMonthly').value) || 0) * 12 * mult;
                 const medicalCost = (parseFloat(document.getElementById('parentMedical').value) || 0) * mult;
                 
-                const livingPV = livingCost > 0 ? (livingCost * ((1 - Math.pow(1 + realRate, -years)) / realRate)) : 0;
-                const medicalPV = medicalCost > 0 ? (medicalCost * ((1 - Math.pow(1 + medRealRate, -years)) / medRealRate)) : 0;
+                livingPV = livingCost > 0 ? (livingCost * ((1 - Math.pow(1 + realRate, -years)) / realRate)) : 0;
+                medicalPV = medicalCost > 0 ? (medicalCost * ((1 - Math.pow(1 + medRealRate, -years)) / medRealRate)) : 0;
                 
                 parentFund = livingPV + medicalPV;
             }
@@ -493,7 +524,10 @@
             }
 
             // 4. Siblings
-            const sibTotal = (parseFloat(document.getElementById('sibMarriage').value) || 0) + (parseFloat(document.getElementById('sibEdu').value) || 0) + (parseFloat(document.getElementById('sibBuf').value) || 0);
+            const sibMarVal = parseFloat(document.getElementById('sibMarriage').value) || 0;
+            const sibEduVal = parseFloat(document.getElementById('sibEdu').value) || 0;
+            const sibBufVal = parseFloat(document.getElementById('sibBuf').value) || 0;
+            const sibTotal = sibMarVal + sibEduVal + sibBufVal;
 
             // 5. Children
             let eduCorpus = 0;
@@ -526,16 +560,20 @@
             medDrain *= longevity;
 
             // 7. Assets Logic
+            const assetLiqVal = parseFloat(document.getElementById('assetLiquid').value) || 0;
+            const assetMktVal = parseFloat(document.getElementById('assetMarket').value) || 0;
+            const currentLICVal = parseFloat(document.getElementById('currentLIC').value) || 0;
             const inheritAmt = parseFloat(document.getElementById('inheritAmt').value) || 0;
+            
+            const assetLiqMktTotal = assetLiqVal + assetMktVal;
             const inheritYrs = parseInt(document.getElementById('inheritYrs').value) || 1;
             const pvInherit = inheritAmt / Math.pow(1 + roi, inheritYrs);
 
-            const baseAssets = (parseFloat(document.getElementById('assetLiquid').value) || 0) + 
-                               (parseFloat(document.getElementById('assetMarket').value) || 0) + 
-                               (parseFloat(document.getElementById('currentLIC').value) || 0) + pvInherit;
+            const baseAssets = assetLiqMktTotal + currentLICVal + pvInherit;
 
             let pvSpouseEPF = 0;
             let sGroupIns = 0;
+            let pvSpouseTotal = 0;
             
             if (isMarried) {
                 const sEPF = parseFloat(document.getElementById('spouseEPF').value) || 0;
@@ -548,13 +586,10 @@
                 if(roi > 0) projectedEPF += sEPFAnnual * ((Math.pow(1 + roi, sYearsToRetire) - 1) / roi);
                 pvSpouseEPF = projectedEPF / Math.pow(1 + roi, sYearsToRetire);
                 
-                document.getElementById('uiSpouseAssets').innerText = `Includes ₹${Math.round(pvSpouseEPF + sGroupIns).toLocaleString('en-IN')} from Spouse EPF/Insurance`;
-                document.getElementById('uiSpouseAssets').classList.remove('hidden');
-            } else {
-                document.getElementById('uiSpouseAssets').classList.add('hidden');
-            }
+                pvSpouseTotal = pvSpouseEPF + sGroupIns;
+            } 
 
-            const totalAssets = baseAssets + sGroupIns + pvSpouseEPF;
+            const totalAssets = baseAssets + pvSpouseTotal;
 
             // 8. Totals
             const totalNeed = hlvIncome + parentFund + liability + sibTotal + fullChildNeed + medDrain;
@@ -568,13 +603,13 @@
                 document.getElementById('standardResultsBlock').classList.add('hidden');
                 document.getElementById('singleSurvivalBlock').classList.remove('hidden');
 
-                // Calculate Personal Survival Corpus (Base living cost scaled by city tier + Medical Buffer)
+                // Calculate Personal Survival Corpus
                 const baseLivingCostMonthly = 15000 * cityMult;
                 const survivalYears = Math.max(0, 80 - age);
                 let survivalCorpus = (baseLivingCostMonthly * 12) * ((1 - Math.pow(1 + realRate, -survivalYears)) / realRate);
                 survivalCorpus += 1000000; // Flat ₹10L Medical Emergency Buffer
                 
-                // Add Medical Drain to the single survival corpus
+                // Add Medical Drain
                 survivalCorpus += medDrain;
                 
                 document.getElementById('survivalCorpus').innerText = fmt.format(Math.round(survivalCorpus));
@@ -597,18 +632,41 @@
                 document.getElementById('standardResultsBlock').classList.remove('hidden');
                 document.getElementById('singleSurvivalBlock').classList.add('hidden');
 
-                // Display
+                // Display Header Totals
                 document.getElementById('totalNeed').innerText = fmt.format(Math.round(totalNeed));
                 document.getElementById('medDrain').innerText = fmt.format(Math.round(medDrain));
                 document.getElementById('uiAssets').innerText = fmt.format(Math.round(totalAssets));
                 document.getElementById('totalGap').innerText = fmt.format(Math.round(gap));
                 
-                // Ledger Display
+                // Ledger Itemized Breakdown Display
                 document.getElementById('uiIncome').innerText = fmt.format(Math.round(hlvIncome));
+                
                 document.getElementById('uiParent').innerText = fmt.format(Math.round(parentFund));
+                document.getElementById('uiParentLiv').innerText = fmt.format(Math.round(livingPV));
+                document.getElementById('uiParentMed').innerText = fmt.format(Math.round(medicalPV));
+                
                 document.getElementById('uiHouse').innerText = fmt.format(Math.round(liability));
+                
                 document.getElementById('uiChild').innerText = fmt.format(Math.round(fullChildNeed));
+                document.getElementById('uiChildEdu').innerText = fmt.format(Math.round(eduCorpus));
+                document.getElementById('uiChildMstone').innerText = fmt.format(Math.round(totalChildLiabilities));
+                
                 document.getElementById('uiSib').innerText = fmt.format(Math.round(sibTotal));
+                document.getElementById('uiSibMar').innerText = fmt.format(Math.round(sibMarVal));
+                document.getElementById('uiSibEdu').innerText = fmt.format(Math.round(sibEduVal));
+                document.getElementById('uiSibBuf').innerText = fmt.format(Math.round(sibBufVal));
+
+                // Asset Itemized Breakdown Display
+                document.getElementById('uiAssetLiquid').innerText = fmt.format(Math.round(assetLiqMktTotal));
+                document.getElementById('uiAssetLic').innerText = fmt.format(Math.round(currentLICVal));
+                document.getElementById('uiAssetInherit').innerText = fmt.format(Math.round(pvInherit));
+                
+                if(isMarried && pvSpouseTotal > 0) {
+                    document.getElementById('uiAssetSpouse').innerText = fmt.format(Math.round(pvSpouseTotal));
+                    document.getElementById('uiSpouseAssetsBox').classList.remove('hidden');
+                } else {
+                    document.getElementById('uiSpouseAssetsBox').classList.add('hidden');
+                }
             }
         }
     </script>

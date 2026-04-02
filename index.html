@@ -12,6 +12,7 @@
             margin-top: 0.25rem; font-size: 0.95rem;
         }
         label { font-weight: 700; color: #1e293b; font-size: 0.85rem; }
+        .input-caption { font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 0.1rem; }
         .result-card { background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%); }
         .gap-card { background: linear-gradient(135deg, #b91c1c 0%, #991b1b 100%); }
         .section-header { border-left: 4px solid #1e3a8a; padding-left: 10px; margin-bottom: 15px; }
@@ -45,7 +46,7 @@
                     <h2 class="text-lg font-bold text-blue-800 section-header">1. Income & Regional Profile</h2>
                     <div class="grid gap-4">
                         <div>
-                            <label>City Category</label>
+                            <span class="input-caption">City Category</span>
                             <select id="cityTier" onchange="deepCalc()">
                                 <option value="1.8">Metro (Mumbai/Delhi/Bangalore)</option>
                                 <option value="1.2" selected>Tier 1 (Chennai/Hyderabad/Pune)</option>
@@ -54,11 +55,11 @@
                             </select>
                         </div>
                         <div>
-                            <label>Your Current Age</label>
+                            <span class="input-caption">Your Current Age</span>
                             <input type="number" id="userAge" value="35" oninput="deepCalc()">
                         </div>
                         <div>
-                            <label>Monthly Take-Home Income (₹)</label>
+                            <span class="input-caption">Monthly Take-Home Income (₹)</span>
                             <input type="number" id="userIncome" value="100000" oninput="deepCalc()">
                         </div>
                     </div>
@@ -77,11 +78,11 @@
                     </div>
                     <div class="grid md:grid-cols-2 gap-4">
                         <div>
-                            <label>Other Monthly Med. Spend (₹)</label>
+                            <span class="input-caption">Other Monthly Med. Spend (₹)</span>
                             <input type="number" id="monthlyMedSpend" value="0" oninput="deepCalc()">
                         </div>
                         <div>
-                            <label>Longevity History</label>
+                            <span class="input-caption">Longevity History</span>
                             <select id="longevityFactor" onchange="deepCalc()">
                                 <option value="1.0">Average (75-80 Yrs)</option>
                                 <option value="1.2">Early Illness History</option>
@@ -96,24 +97,32 @@
                     <div class="grid md:grid-cols-2 gap-6">
                         <div class="p-4 bg-orange-50 rounded-xl border border-orange-100">
                             <label class="block mb-1">Father's Status</label>
-                            <div class="radio-group mb-3">
+                            <div class="radio-group mb-4">
                                 <label class="radio-item"><input type="radio" name="fatherAlive" value="yes" checked onchange="deepCalc()"> Alive</label>
                                 <label class="radio-item"><input type="radio" name="fatherAlive" value="no" onchange="deepCalc()"> No</label>
                             </div>
+                            <span class="input-caption">Father's Age</span>
                             <input type="number" id="fatherAge" value="65" oninput="deepCalc()">
                         </div>
                         <div class="p-4 bg-orange-50 rounded-xl border border-orange-100">
                             <label class="block mb-1">Mother's Status</label>
-                            <div class="radio-group mb-3">
+                            <div class="radio-group mb-4">
                                 <label class="radio-item"><input type="radio" name="motherAlive" value="yes" checked onchange="deepCalc()"> Alive</label>
                                 <label class="radio-item"><input type="radio" name="motherAlive" value="no" onchange="deepCalc()"> No</label>
                             </div>
+                            <span class="input-caption">Mother's Age</span>
                             <input type="number" id="motherAge" value="60" oninput="deepCalc()">
                         </div>
                     </div>
                     <div class="mt-4 grid md:grid-cols-2 gap-4 border-t pt-4">
-                        <input type="number" id="parentMonthly" value="25000" placeholder="Monthly Support" oninput="deepCalc()">
-                        <input type="number" id="parentMedical" value="100000" placeholder="Annual Medical" oninput="deepCalc()">
+                        <div>
+                            <span class="input-caption">Monthly Support Combined (₹)</span>
+                            <input type="number" id="parentMonthly" value="25000" oninput="deepCalc()">
+                        </div>
+                        <div>
+                            <span class="input-caption">Annual Medical Buffer (₹)</span>
+                            <input type="number" id="parentMedical" value="100000" oninput="deepCalc()">
+                        </div>
                     </div>
                 </div>
 
@@ -130,7 +139,7 @@
                     <div id="futureHomeSection" class="p-5 bg-blue-50 rounded-xl space-y-4">
                         <div class="grid md:grid-cols-2 gap-4">
                             <div>
-                                <label>Micro-Setting</label>
+                                <span class="input-caption">Micro-Setting</span>
                                 <select id="microSetting" onchange="deepCalc()">
                                     <option value="1.0">Urban (City Center)</option>
                                     <option value="0.75">Semi-Urban</option>
@@ -138,7 +147,7 @@
                                 </select>
                             </div>
                             <div>
-                                <label>Property Type</label>
+                                <span class="input-caption">Property Type</span>
                                 <select id="propType" onchange="deepCalc()">
                                     <option value="5500000">Compact 2 BHK</option>
                                     <option value="10000000" selected>Standard 3 BHK / Villa</option>
@@ -146,7 +155,10 @@
                                 </select>
                             </div>
                         </div>
-                        <input type="number" id="buyInYears" value="5" placeholder="Purchase in how many years?" oninput="deepCalc()">
+                        <div>
+                            <span class="input-caption">Purchase Timeline (Years)</span>
+                            <input type="number" id="buyInYears" value="5" oninput="deepCalc()">
+                        </div>
                     </div>
 
                     <div id="existingLoanSection" class="hidden p-5 bg-slate-50 rounded-xl border border-slate-200">
@@ -156,10 +168,22 @@
                             <label class="radio-item"><input type="radio" name="isLoaned" value="no" checked onchange="handleLoanToggle()"> No</label>
                         </div>
                         <div id="loanFields" class="hidden grid md:grid-cols-2 gap-4 border-t pt-4">
-                            <input type="number" id="loanPrincipal" value="5000000" placeholder="Original Loan Amount" oninput="deepCalc()">
-                            <input type="number" id="loanInt" value="9.0" placeholder="Current Interest %" oninput="deepCalc()">
-                            <input type="number" id="loanTenure" value="20" placeholder="Total Tenure (Years)" oninput="deepCalc()">
-                            <input type="month" id="loanStart" value="2022-01" oninput="deepCalc()">
+                            <div>
+                                <span class="input-caption">Original Loan Amount (₹)</span>
+                                <input type="number" id="loanPrincipal" value="5000000" oninput="deepCalc()">
+                            </div>
+                            <div>
+                                <span class="input-caption">Current Interest (%)</span>
+                                <input type="number" id="loanInt" value="9.0" oninput="deepCalc()">
+                            </div>
+                            <div>
+                                <span class="input-caption">Total Tenure (Years)</span>
+                                <input type="number" id="loanTenure" value="20" oninput="deepCalc()">
+                            </div>
+                            <div>
+                                <span class="input-caption">Loan Start Month</span>
+                                <input type="month" id="loanStart" value="2022-01" oninput="deepCalc()">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -167,16 +191,25 @@
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                     <h2 class="text-lg font-bold text-purple-800 section-header">5. Sibling Support</h2>
                     <div class="space-y-3">
-                        <div class="sub-section"><label>Sibling Marriage Provision (₹)</label><input type="number" id="sibMarriage" value="0" oninput="deepCalc()"></div>
-                        <div class="sub-section"><label>Sibling Education Support (₹)</label><input type="number" id="sibEdu" value="0" oninput="deepCalc()"></div>
-                        <div class="sub-section"><label>Emergency Buffer for Siblings (₹)</label><input type="number" id="sibBuf" value="0" oninput="deepCalc()"></div>
+                        <div class="sub-section">
+                            <span class="input-caption">Sibling Marriage Provision (₹)</span>
+                            <input type="number" id="sibMarriage" value="0" oninput="deepCalc()">
+                        </div>
+                        <div class="sub-section">
+                            <span class="input-caption">Sibling Education Support (₹)</span>
+                            <input type="number" id="sibEdu" value="0" oninput="deepCalc()">
+                        </div>
+                        <div class="sub-section">
+                            <span class="input-caption">Emergency Buffer for Siblings (₹)</span>
+                            <input type="number" id="sibBuf" value="0" oninput="deepCalc()">
+                        </div>
                     </div>
                 </div>
-                
+
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                     <h2 class="text-lg font-bold text-blue-900 section-header">6. Immediate Family Support</h2>
                     <div class="mb-4">
-                        <label>Marital Status</label>
+                        <span class="input-caption">Marital Status</span>
                         <select id="maritalStatus" onchange="toggleMarriedSection()">
                             <option value="married" selected>Married</option>
                             <option value="single">Single</option>
@@ -188,33 +221,33 @@
                             <p class="text-blue-800 font-bold text-xs uppercase tracking-widest">Spouse Profile & Assets</p>
                             <div class="grid md:grid-cols-2 gap-4">
                                 <div>
-                                    <label>Spouse Age</label>
+                                    <span class="input-caption">Spouse Age</span>
                                     <input type="number" id="spouseAge" value="32" oninput="deepCalc()">
                                 </div>
                                 <div>
-                                    <label>Employment Type</label>
+                                    <span class="input-caption">Employment Type</span>
                                     <select id="spouseJobType" onchange="deepCalc()">
                                         <option value="private">Private Sector / Business</option>
                                         <option value="govt">Government Sector</option>
                                     </select>
                                 </div>
                                 <div class="md:col-span-2">
-                                    <label>Monthly Take-Home Income (₹)</label>
+                                    <span class="input-caption">Monthly Take-Home Income (₹)</span>
                                     <input type="number" id="spouseIncome" value="0" oninput="deepCalc()">
                                 </div>
                             </div>
 
                             <div class="grid md:grid-cols-2 gap-4 border-t border-blue-200 pt-4">
                                 <div>
-                                    <label>Employer Life Cover (₹)</label>
+                                    <span class="input-caption">Employer Life Cover (₹)</span>
                                     <input type="number" id="spouseGroupIns" value="0" oninput="deepCalc()">
                                 </div>
                                 <div>
-                                    <label>Current EPF Balance (₹)</label>
+                                    <span class="input-caption">Current EPF Balance (₹)</span>
                                     <input type="number" id="spouseEPF" value="0" oninput="deepCalc()">
                                 </div>
                                 <div class="md:col-span-2">
-                                    <label>Annual EPF Contribution (Self + Co, ₹)</label>
+                                    <span class="input-caption">Annual EPF Contribution (Self + Co, ₹)</span>
                                     <input type="number" id="spouseEPFAnnual" value="0" oninput="deepCalc()">
                                 </div>
                             </div>
@@ -223,7 +256,7 @@
                         <div class="p-5 bg-slate-50 rounded-xl border border-slate-200 space-y-4">
                             <p class="text-slate-800 font-bold text-xs uppercase tracking-widest">Children's Provisions</p>
                             <div>
-                                <label>Number of Children</label>
+                                <span class="input-caption">Number of Children</span>
                                 <input type="number" id="numChildren" value="1" min="0" onchange="generateChildren()">
                             </div>
                             <div id="childContainer" class="space-y-4"></div>
@@ -234,14 +267,29 @@
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                     <h2 class="text-lg font-bold text-green-700 section-header">7. Assets & Inheritance</h2>
                     <div class="grid md:grid-cols-2 gap-4">
-                        <div class="asset-row"><label>Bank/PO/Gold (₹)</label><input type="number" id="assetLiquid" value="0" oninput="deepCalc()"></div>
-                        <div class="asset-row"><label>Mutual Funds/Equity (₹)</label><input type="number" id="assetMarket" value="0" oninput="deepCalc()"></div>
-                        <div class="md:col-span-2 p-3 bg-blue-50 rounded-lg"><label>Existing Life Cover Sum Assured (₹)</label><input type="number" id="currentLIC" value="0" oninput="deepCalc()"></div>
+                        <div class="asset-row">
+                            <span class="input-caption">Bank / PO / Gold (₹)</span>
+                            <input type="number" id="assetLiquid" value="0" oninput="deepCalc()">
+                        </div>
+                        <div class="asset-row">
+                            <span class="input-caption">Mutual Funds / Equity (₹)</span>
+                            <input type="number" id="assetMarket" value="0" oninput="deepCalc()">
+                        </div>
+                        <div class="md:col-span-2 p-3 bg-blue-50 rounded-lg">
+                            <span class="input-caption">Existing Life Cover Sum Assured (₹)</span>
+                            <input type="number" id="currentLIC" value="0" oninput="deepCalc()">
+                        </div>
                         <div class="md:col-span-2 p-3 bg-green-50 rounded-lg">
-                            <label>Inheritance Amount & Timeline (Yrs)</label>
-                            <div class="flex gap-2">
-                                <input type="number" id="inheritAmt" value="0" oninput="deepCalc()">
-                                <input type="number" id="inheritYrs" value="15" oninput="deepCalc()">
+                            <label class="block mb-2 text-slate-800 font-bold">Inheritance Expected</label>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <span class="input-caption">Amount (₹)</span>
+                                    <input type="number" id="inheritAmt" value="0" oninput="deepCalc()">
+                                </div>
+                                <div>
+                                    <span class="input-caption">Timeline (Years)</span>
+                                    <input type="number" id="inheritYrs" value="15" oninput="deepCalc()">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -330,15 +378,15 @@
                 container.innerHTML += `
                 <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm space-y-3 child-block">
                     <p class="text-blue-700 font-bold text-[10px] uppercase">Child ${i} Details</p>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div><label class="text-xs">Age</label><input type="number" class="c-age" value="5" oninput="deepCalc()"></div>
-                        <div><label class="text-xs">Sex</label><select class="c-gen" onchange="deepCalc()"><option value="female">Daughter</option><option value="male">Son</option></select></div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div><span class="input-caption">Age</span><input type="number" class="c-age" value="5" oninput="deepCalc()"></div>
+                        <div><span class="input-caption">Sex</span><select class="c-gen" onchange="deepCalc()"><option value="female">Daughter</option><option value="male">Son</option></select></div>
                     </div>
-                    <div class="grid grid-cols-2 gap-3">
-                        <div><label class="text-xs">Monthly Med. Care (₹)</label><input type="number" class="c-med" value="0" oninput="deepCalc()"></div>
-                        <div><label class="text-xs">Milestone Age (Edu/Mar)</label><input type="number" class="c-mstone-age" value="21" oninput="deepCalc()"></div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div><span class="input-caption">Monthly Med. Care (₹)</span><input type="number" class="c-med" value="0" oninput="deepCalc()"></div>
+                        <div><span class="input-caption">Milestone Age (Edu/Mar)</span><input type="number" class="c-mstone-age" value="21" oninput="deepCalc()"></div>
                     </div>
-                    <div><label class="text-xs">Milestone Lump Sum Req. (₹)</label><input type="number" class="c-mstone-amt" value="2000000" oninput="deepCalc()"></div>
+                    <div><span class="input-caption">Milestone Lump Sum Req. (₹)</span><input type="number" class="c-mstone-amt" value="2000000" oninput="deepCalc()"></div>
                 </div>`;
             }
             deepCalc();

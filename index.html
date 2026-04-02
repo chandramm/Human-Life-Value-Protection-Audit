@@ -7,7 +7,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .hidden { display: none !important; }
-        /* Enforced identical heights and strict box sizing for all inputs */
         input[type="number"], input[type="month"], select { 
             width: 100%; border: 1px solid #e2e8f0; padding: 0.5rem 0.7rem; border-radius: 0.5rem; 
             margin-top: 0.25rem; font-size: 0.95rem; height: 46px; box-sizing: border-box; background-color: #fff;
@@ -44,7 +43,7 @@
             <div class="lg:col-span-7 space-y-8 min-w-0">
                 
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                    <h2 class="text-lg font-bold text-blue-800 section-header">1. Income & Regional Profile</h2>
+                    <h2 class="text-lg font-bold text-blue-800 section-header">1. Income, Profile & Savings</h2>
                     <div class="grid md:grid-cols-2 gap-4">
                         <div>
                             <span class="input-caption">City Category</span>
@@ -59,9 +58,22 @@
                             <span class="input-caption">Your Current Age</span>
                             <input type="number" id="userAge" value="35" oninput="deepCalc()">
                         </div>
-                        <div class="md:col-span-2">
-                            <span class="input-caption">Monthly Take-Home Income (₹)</span>
+                        <div>
+                            <span class="input-caption">Planned Retirement Age</span>
+                            <input type="number" id="retireAge" value="60" oninput="deepCalc()">
+                        </div>
+                        <div>
+                            <span class="input-caption">Monthly Take-Home (Active) (₹)</span>
                             <input type="number" id="userIncome" value="100000" oninput="deepCalc()">
+                        </div>
+                        <div>
+                            <span class="input-caption">Monthly Passive Income (₹)</span>
+                            <input type="number" id="passiveIncome" value="0" oninput="deepCalc()">
+                            <p class="text-[9px] text-orange-600 mt-1 italic leading-tight">*Do not include interest from assets listed in Section 7 (prevents double-counting).</p>
+                        </div>
+                        <div>
+                            <span class="input-caption">Monthly Savings / Investments (₹)</span>
+                            <input type="number" id="monthlySavings" value="15000" oninput="deepCalc()">
                         </div>
                     </div>
                 </div>
@@ -370,6 +382,12 @@
                             <div id="totalGap" class="text-5xl font-black mb-4 tracking-tighter">₹ 0</div>
                             <p class="text-red-100 text-xs opacity-90 italic">Audit by Chandramohan (9791004920).</p>
                         </div>
+
+                        <div id="forecastBox" class="bg-slate-800 p-5 rounded-2xl border border-slate-700 w-full mt-4 hidden">
+                            <h3 class="text-slate-300 uppercase text-[10px] font-black tracking-widest">Future Risk Amortization</h3>
+                            <p class="text-[9px] text-slate-400 mt-0.5 mb-2">Projection based on declared monthly savings & inflation.</p>
+                            <div id="forecastContainer"></div>
+                        </div>
                     </div>
 
                     <div id="singleSurvivalBlock" class="hidden space-y-4">
@@ -469,18 +487,24 @@
 
         function deepCalc() {
             const age = parseInt(document.getElementById('userAge').value) || 35;
+            const retireAge = parseInt(document.getElementById('retireAge').value) || 60;
             const income = parseInt(document.getElementById('userIncome').value) || 0;
+            const passiveIncome = parseInt(document.getElementById('passiveIncome').value) || 0;
+            const monthlySavings = parseInt(document.getElementById('monthlySavings').value) || 0;
+            
             const isMarried = document.getElementById('maritalStatus').value === 'married';
             const sIncome = isMarried ? (parseInt(document.getElementById('spouseIncome').value) || 0) : 0;
             const cityMult = parseFloat(document.getElementById('cityTier').value);
+            
+            const yearsToRetire = Math.max(0, retireAge - age);
             
             const roi = 0.08, gInf = 0.06, medInf = 0.10;
             const realRate = (roi - gInf) / (1 + gInf);
             const medRealRate = (roi - medInf) / (1 + medInf);
 
-            // 1. Income Replacement
-            let replacementNeeded = Math.max(0, ((income + sIncome) * 12 * 0.7) - (sIncome * 12)); 
-            let hlvIncome = replacementNeeded * ((1 - Math.pow(1 + realRate, -(60 - age))) / realRate);
+            // 1. Income Replacement (Now subtracts passive income & uses custom retirement age)
+            let replacementNeeded = Math.max(0, ((income + sIncome) * 12 * 0.7) - (sIncome * 12) - (passiveIncome * 12)); 
+            let hlvIncome = yearsToRetire > 0 ? replacementNeeded * ((1 - Math.pow(1 + realRate, -yearsToRetire)) / realRate) : 0;
 
             // 2. Parents
             let parentFund = 0;
@@ -555,7 +579,7 @@
             // 6. Medical Drain
             let monthlyMed = parseFloat(document.getElementById('monthlyMedSpend').value) || 0;
             document.querySelectorAll('.med-cond:checked').forEach(c => {monthlyMed += parseFloat(c.value);});
-            let medDrain = (monthlyMed * 12) * ((1 - Math.pow(1 + medRealRate, -(60 - age))) / medRealRate);
+            let medDrain = yearsToRetire > 0 ? (monthlyMed * 12) * ((1 - Math.pow(1 + medRealRate, -yearsToRetire)) / medRealRate) : 0;
             const longevity = parseFloat(document.getElementById('longevityFactor').value) || 1.0;
             medDrain *= longevity;
 
@@ -581,10 +605,10 @@
                 const sAge = parseInt(document.getElementById('spouseAge').value) || 35;
                 sGroupIns = parseFloat(document.getElementById('spouseGroupIns').value) || 0;
                 
-                const sYearsToRetire = Math.max(0, 60 - sAge);
+                const sYearsToRetire = Math.max(0, retireAge - sAge);
                 let projectedEPF = sEPF * Math.pow(1 + roi, sYearsToRetire);
-                if(roi > 0) projectedEPF += sEPFAnnual * ((Math.pow(1 + roi, sYearsToRetire) - 1) / roi);
-                pvSpouseEPF = projectedEPF / Math.pow(1 + roi, sYearsToRetire);
+                if(roi > 0 && sYearsToRetire > 0) projectedEPF += sEPFAnnual * ((Math.pow(1 + roi, sYearsToRetire) - 1) / roi);
+                pvSpouseEPF = sYearsToRetire > 0 ? projectedEPF / Math.pow(1 + roi, sYearsToRetire) : sEPF;
                 
                 pvSpouseTotal = pvSpouseEPF + sGroupIns;
             } 
@@ -603,13 +627,10 @@
                 document.getElementById('standardResultsBlock').classList.add('hidden');
                 document.getElementById('singleSurvivalBlock').classList.remove('hidden');
 
-                // Calculate Personal Survival Corpus
                 const baseLivingCostMonthly = 15000 * cityMult;
-                const survivalYears = Math.max(0, 80 - age);
+                const survivalYears = Math.max(0, 85 - age);
                 let survivalCorpus = (baseLivingCostMonthly * 12) * ((1 - Math.pow(1 + realRate, -survivalYears)) / realRate);
-                survivalCorpus += 1000000; // Flat ₹10L Medical Emergency Buffer
-                
-                // Add Medical Drain
+                survivalCorpus += 1000000; 
                 survivalCorpus += medDrain;
                 
                 document.getElementById('survivalCorpus').innerText = fmt.format(Math.round(survivalCorpus));
@@ -666,6 +687,40 @@
                     document.getElementById('uiSpouseAssetsBox').classList.remove('hidden');
                 } else {
                     document.getElementById('uiSpouseAssetsBox').classList.add('hidden');
+                }
+
+                // 10. GENERATE FORECAST TABLE (Features 4 & 5)
+                let forecastHTML = `<table class="w-full mt-3 text-xs text-left text-slate-200">
+                    <thead><tr class="border-b border-slate-600"><th class="pb-1">Timeline</th><th class="pb-1">Proj. Assets</th><th class="pb-1">Proj. Need</th><th class="pb-1 text-right">Net Gap</th></tr></thead>
+                    <tbody>`;
+
+                const intervals = [1, 5, 10]; 
+                let showForecast = false;
+
+                intervals.forEach(t => {
+                    if (t < yearsToRetire) {
+                        showForecast = true;
+                        // Future Assets: Current grown by ROI + future value of savings annuity
+                        const fvAssets = totalAssets * Math.pow(1 + roi, t) + (monthlySavings * 12) * ((Math.pow(1 + roi, t) - 1) / roi);
+                        
+                        // Future Need Approximation
+                        const remainingYTR = yearsToRetire - t;
+                        const futureHLV = remainingYTR > 0 ? (replacementNeeded * Math.pow(1 + gInf, t)) * ((1 - Math.pow(1 + realRate, -remainingYTR)) / realRate) : 0;
+                        const nonHlvNeed = totalNeed - hlvIncome; 
+                        const projectedNeed = futureHLV + (nonHlvNeed * Math.pow(1 + gInf/2, t)); // Mild inflation growth for static needs
+                        
+                        const projectedGap = Math.max(0, projectedNeed - fvAssets);
+                        
+                        forecastHTML += `<tr class="border-b border-slate-700/50"><td class="py-1.5">Year ${t}</td><td>${fmt.format(Math.round(fvAssets))}</td><td>${fmt.format(Math.round(projectedNeed))}</td><td class="text-red-400 font-bold text-right">${fmt.format(Math.round(projectedGap))}</td></tr>`;
+                    }
+                });
+                forecastHTML += `</tbody></table>`;
+                
+                if (showForecast) {
+                    document.getElementById('forecastContainer').innerHTML = forecastHTML;
+                    document.getElementById('forecastBox').classList.remove('hidden');
+                } else {
+                    document.getElementById('forecastBox').classList.add('hidden');
                 }
             }
         }

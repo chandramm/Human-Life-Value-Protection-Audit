@@ -7,9 +7,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .hidden { display: none !important; }
+        /* FIXED: Added explicit height, background-color, and box-sizing to ensure perfectly uniform heights */
         input[type="number"], input[type="month"], select { 
-            width: 100%; border: 1px solid #e2e8f0; padding: 0.7rem; border-radius: 0.5rem; 
-            margin-top: 0.25rem; font-size: 0.95rem;
+            width: 100%; border: 1px solid #e2e8f0; padding: 0.5rem 0.7rem; border-radius: 0.5rem; 
+            margin-top: 0.25rem; font-size: 0.95rem; height: 46px; box-sizing: border-box; background-color: #fff;
         }
         label { font-weight: 700; color: #1e293b; font-size: 0.85rem; }
         .input-caption { font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 0.1rem; }
@@ -19,7 +20,7 @@
         .risk-row { background-color: #fff1f2; border: 1px solid #fecdd3; padding: 10px; border-radius: 8px; }
         .asset-row { background-color: #f0fdf4; border: 1px solid #dcfce7; padding: 10px; border-radius: 8px; }
         .sub-section { background-color: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 10px; }
-        .radio-group { display: flex; gap: 1.5rem; margin-top: 0.5rem; flex-wrap: wrap; }
+        .radio-group { display: flex; gap: 1.5rem; margin-top: 0.5rem; flex-wrap: wrap; align-items: center; min-height: 46px; }
         .radio-item, .checkbox-item { display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.85rem; font-weight: 500; }
         input[type="radio"], input[type="checkbox"] { width: 1.1rem; height: 1.1rem; cursor: pointer; margin: 0; }
         @media print { .no-print { display: none !important; } }
@@ -44,7 +45,7 @@
                 
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                     <h2 class="text-lg font-bold text-blue-800 section-header">1. Income & Regional Profile</h2>
-                    <div class="grid gap-4">
+                    <div class="grid md:grid-cols-2 gap-4">
                         <div>
                             <span class="input-caption">City Category</span>
                             <select id="cityTier" onchange="deepCalc()">
@@ -58,7 +59,7 @@
                             <span class="input-caption">Your Current Age</span>
                             <input type="number" id="userAge" value="35" oninput="deepCalc()">
                         </div>
-                        <div>
+                        <div class="md:col-span-2">
                             <span class="input-caption">Monthly Take-Home Income (₹)</span>
                             <input type="number" id="userIncome" value="100000" oninput="deepCalc()">
                         </div>
@@ -76,7 +77,7 @@
                             <label class="checkbox-item"><input type="checkbox" class="med-cond" value="10000" onchange="deepCalc()"> Chronic Kidney/Other</label>
                         </div>
                     </div>
-                    <div class="gap-4">
+                    <div class="grid md:grid-cols-2 gap-4">
                         <div>
                             <span class="input-caption">Longevity History</span>
                             <select id="longevityFactor" onchange="deepCalc()">
@@ -205,7 +206,7 @@
                         </div>
                     </div>
                 </div>
-
+                
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                     <h2 class="text-lg font-bold text-blue-900 section-header">6. Immediate Family Support</h2>
                     <div class="mb-4">

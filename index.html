@@ -46,7 +46,7 @@
                     <div class="grid gap-4">
                         <div>
                             <label>City Category</label>
-                            <select id="cityTier" onchange="deepCalc()">
+                            <select id="cityTier" onchange="deepCalc()" class="w-full px-3 py-2 border border-gray-300 rounded-md">
                                 <option value="1.8">Metro (Mumbai/Delhi/Bangalore)</option>
                                 <option value="1.2" selected>Tier 1 (Chennai/Hyderabad/Pune)</option>
                                 <option value="0.85">Tier 2 (Coimbatore/Vizag)</option>
@@ -55,11 +55,11 @@
                         </div>
                         <div>
                             <label>Your Current Age</label>
-                            <input type="number" id="userAge" value="35" oninput="deepCalc()">
+                            <input type="number" id="userAge" value="35" oninput="deepCalc()" class="w-full px-3 py-2 border border-gray-300 rounded-md">
                         </div>
                         <div>
                             <label>Monthly Take-Home Income (₹)</label>
-                            <input type="number" id="userIncome" value="100000" oninput="deepCalc()">
+                            <input type="number" id="userIncome" value="100000" oninput="deepCalc()" class="w-full px-3 py-2 border border-gray-300 rounded-md">
                         </div>
                     </div>
                 </div>

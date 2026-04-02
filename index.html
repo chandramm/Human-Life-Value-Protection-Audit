@@ -19,7 +19,7 @@
         .asset-row { background-color: #f0fdf4; border: 1px solid #dcfce7; padding: 10px; border-radius: 8px; }
         .sub-section { background-color: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0; margin-bottom: 10px; }
         .radio-group { display: flex; gap: 1.5rem; margin-top: 0.5rem; flex-wrap: wrap; }
-        .radio-item { display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.85rem; font-weight: 500; }
+        .radio-item, .checkbox-item { display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer; font-size: 0.85rem; font-weight: 500; }
         input[type="radio"], input[type="checkbox"] { width: 1.1rem; height: 1.1rem; cursor: pointer; margin: 0; }
         @media print { .no-print { display: none !important; } }
     </style>
@@ -46,7 +46,7 @@
                     <div class="grid gap-4">
                         <div>
                             <label>City Category</label>
-                            <select id="cityTier" onchange="deepCalc()" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                            <select id="cityTier" onchange="deepCalc()">
                                 <option value="1.8">Metro (Mumbai/Delhi/Bangalore)</option>
                                 <option value="1.2" selected>Tier 1 (Chennai/Hyderabad/Pune)</option>
                                 <option value="0.85">Tier 2 (Coimbatore/Vizag)</option>
@@ -55,41 +55,41 @@
                         </div>
                         <div>
                             <label>Your Current Age</label>
-                            <input type="number" id="userAge" value="35" oninput="deepCalc()" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                            <input type="number" id="userAge" value="35" oninput="deepCalc()">
                         </div>
                         <div>
                             <label>Monthly Take-Home Income (₹)</label>
-                            <input type="number" id="userIncome" value="100000" oninput="deepCalc()" class="w-full px-3 py-2 border border-gray-300 rounded-md">
+                            <input type="number" id="userIncome" value="100000" oninput="deepCalc()">
                         </div>
                     </div>
                 </div>
 
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-    			<h2 class="text-lg font-bold text-red-700 section-header">2. Health & Longevity Risk</h2>
-    			<div class="risk-row mb-4">
-        			<label class="text-red-900 block mb-2">Chronic Conditions (Impact on Risk Pool)</label>
-        			<div class="grid grid-cols-2 gap-4 mt-2">
-            				<label class="checkbox-item"><input type="checkbox" class="med-cond" value="5000" onchange="deepCalc()"> Diabetes</label>
-            				<label class="checkbox-item"><input type="checkbox" class="med-cond" value="3000" onchange="deepCalc()"> Hypertension</label>
-            				<label class="checkbox-item"><input type="checkbox" class="med-cond" value="8000" onchange="deepCalc()"> Heart Condition</label>
-            				<label class="checkbox-item"><input type="checkbox" class="med-cond" value="10000" onchange="deepCalc()"> Chronic Kidney/Other</label>
-        			</div>
-    			</div>
-    			<div class="grid md:grid-cols-2 gap-4">
-        			<div>
-            				<label>Other Monthly Med. Spend (₹)</label>
-            				<input type="number" id="monthlyMedSpend" value="0" oninput="deepCalc()">
-        			</div>
-        			<div>
-            				<label>Longevity History</label>
-            				<select id="longevityFactor" onchange="deepCalc()">
-                				<option value="1.0">Average (75-80 Yrs)</option>
-                				<option value="1.2">Early Illness History</option>
-                				<option value="0.9">High (85+ History)</option>
-            				</select>
-        			</div>
-    			</div>
-		</div>
+                    <h2 class="text-lg font-bold text-red-700 section-header">2. Health & Longevity Risk</h2>
+                    <div class="risk-row mb-4">
+                        <label class="text-red-900 block mb-2">Chronic Conditions (Impact on Risk Pool)</label>
+                        <div class="grid grid-cols-2 gap-4 mt-2">
+                            <label class="checkbox-item"><input type="checkbox" class="med-cond" value="5000" onchange="deepCalc()"> Diabetes</label>
+                            <label class="checkbox-item"><input type="checkbox" class="med-cond" value="3000" onchange="deepCalc()"> Hypertension</label>
+                            <label class="checkbox-item"><input type="checkbox" class="med-cond" value="8000" onchange="deepCalc()"> Heart Condition</label>
+                            <label class="checkbox-item"><input type="checkbox" class="med-cond" value="10000" onchange="deepCalc()"> Chronic Kidney/Other</label>
+                        </div>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <div>
+                            <label>Other Monthly Med. Spend (₹)</label>
+                            <input type="number" id="monthlyMedSpend" value="0" oninput="deepCalc()">
+                        </div>
+                        <div>
+                            <label>Longevity History</label>
+                            <select id="longevityFactor" onchange="deepCalc()">
+                                <option value="1.0">Average (75-80 Yrs)</option>
+                                <option value="1.2">Early Illness History</option>
+                                <option value="0.9">High (85+ History)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
 
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                     <h2 class="text-lg font-bold text-orange-700 section-header">3. Parental Support Liability</h2>
@@ -171,65 +171,65 @@
                         <div class="sub-section"><label>Sibling Education Support (₹)</label><input type="number" id="sibEdu" value="0" oninput="deepCalc()"></div>
                         <div class="sub-section"><label>Emergency Buffer for Siblings (₹)</label><input type="number" id="sibBuf" value="0" oninput="deepCalc()"></div>
                     </div>
-		</div>
-		<div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-    <h2 class="text-lg font-bold text-blue-900 section-header">6. Immediate Family Support</h2>
-    <div class="mb-4">
-        <label>Marital Status</label>
-        <select id="maritalStatus" onchange="toggleMarriedSection()">
-            <option value="married" selected>Married</option>
-            <option value="single">Single</option>
-        </select>
-    </div>
+                </div>
+                
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <h2 class="text-lg font-bold text-blue-900 section-header">6. Immediate Family Support</h2>
+                    <div class="mb-4">
+                        <label>Marital Status</label>
+                        <select id="maritalStatus" onchange="toggleMarriedSection()">
+                            <option value="married" selected>Married</option>
+                            <option value="single">Single</option>
+                        </select>
+                    </div>
 
-    <div id="marriedGroup" class="space-y-6">
-        <div class="p-5 bg-blue-50 rounded-xl border border-blue-100 space-y-4">
-            <p class="text-blue-800 font-bold text-xs uppercase tracking-widest">Spouse Profile & Assets</p>
-            <div class="grid md:grid-cols-2 gap-4">
-                <div>
-                    <label>Spouse Age</label>
-                    <input type="number" id="spouseAge" value="32" oninput="deepCalc()">
-                </div>
-                <div>
-                    <label>Employment Type</label>
-                    <select id="spouseJobType" onchange="deepCalc()">
-                        <option value="private">Private Sector / Business</option>
-                        <option value="govt">Government Sector</option>
-                    </select>
-                </div>
-                <div class="md:col-span-2">
-                    <label>Monthly Take-Home Income (₹)</label>
-                    <input type="number" id="spouseIncome" value="0" oninput="deepCalc()">
-                </div>
-            </div>
+                    <div id="marriedGroup" class="space-y-6">
+                        <div class="p-5 bg-blue-50 rounded-xl border border-blue-100 space-y-4">
+                            <p class="text-blue-800 font-bold text-xs uppercase tracking-widest">Spouse Profile & Assets</p>
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <div>
+                                    <label>Spouse Age</label>
+                                    <input type="number" id="spouseAge" value="32" oninput="deepCalc()">
+                                </div>
+                                <div>
+                                    <label>Employment Type</label>
+                                    <select id="spouseJobType" onchange="deepCalc()">
+                                        <option value="private">Private Sector / Business</option>
+                                        <option value="govt">Government Sector</option>
+                                    </select>
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label>Monthly Take-Home Income (₹)</label>
+                                    <input type="number" id="spouseIncome" value="0" oninput="deepCalc()">
+                                </div>
+                            </div>
 
-            <div class="grid md:grid-cols-2 gap-4 border-t border-blue-200 pt-4">
-                <div>
-                    <label>Employer Life Cover (₹)</label>
-                    <input type="number" id="spouseGroupIns" value="0" oninput="deepCalc()">
-                </div>
-                <div>
-                    <label>Current EPF Balance (₹)</label>
-                    <input type="number" id="spouseEPF" value="0" oninput="deepCalc()">
-                </div>
-                <div class="md:col-span-2">
-                    <label>Annual EPF Contribution (Self + Co, ₹)</label>
-                    <input type="number" id="spouseEPFAnnual" value="0" oninput="deepCalc()">
-                </div>
-            </div>
-        </div>
+                            <div class="grid md:grid-cols-2 gap-4 border-t border-blue-200 pt-4">
+                                <div>
+                                    <label>Employer Life Cover (₹)</label>
+                                    <input type="number" id="spouseGroupIns" value="0" oninput="deepCalc()">
+                                </div>
+                                <div>
+                                    <label>Current EPF Balance (₹)</label>
+                                    <input type="number" id="spouseEPF" value="0" oninput="deepCalc()">
+                                </div>
+                                <div class="md:col-span-2">
+                                    <label>Annual EPF Contribution (Self + Co, ₹)</label>
+                                    <input type="number" id="spouseEPFAnnual" value="0" oninput="deepCalc()">
+                                </div>
+                            </div>
+                        </div>
 
-        <div class="p-5 bg-slate-50 rounded-xl border border-slate-200 space-y-4">
-            <p class="text-slate-800 font-bold text-xs uppercase tracking-widest">Children's Provisions</p>
-            <div>
-                <label>Number of Children</label>
-                <input type="number" id="numChildren" value="1" min="0" onchange="generateChildren()">
-            </div>
-            <div id="childContainer" class="space-y-4">
+                        <div class="p-5 bg-slate-50 rounded-xl border border-slate-200 space-y-4">
+                            <p class="text-slate-800 font-bold text-xs uppercase tracking-widest">Children's Provisions</p>
+                            <div>
+                                <label>Number of Children</label>
+                                <input type="number" id="numChildren" value="1" min="0" onchange="generateChildren()">
+                            </div>
+                            <div id="childContainer" class="space-y-4"></div>
+                        </div>
+                    </div>
                 </div>
-        </div>
-    </div>
-</div>
 
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                     <h2 class="text-lg font-bold text-green-700 section-header">7. Assets & Inheritance</h2>
@@ -250,19 +250,48 @@
 
             <div class="lg:col-span-5">
                 <div class="sticky top-8 space-y-4">
-                    <div class="result-card text-white p-8 rounded-3xl shadow-xl">
-                        <h3 class="text-blue-200 uppercase text-xs font-black tracking-widest">Gross Family Need</h3>
-                        <div id="totalNeed" class="text-4xl font-black mb-1">₹ 0</div>
+                    
+                    <div class="result-card text-white p-6 rounded-3xl shadow-xl">
+                        <h3 class="text-blue-200 uppercase text-[10px] font-black tracking-widest mb-1">Gross Family Liability</h3>
+                        <div id="totalNeed" class="text-4xl font-black mb-3">₹ 0</div>
+                        
+                        <div class="space-y-2 mt-4 pt-4 border-t border-blue-400">
+                            <div class="flex justify-between text-xs text-blue-100">
+                                <span>Income Replacement</span><span id="uiIncome" class="font-bold text-white">₹ 0</span>
+                            </div>
+                            <div class="flex justify-between text-xs text-blue-100">
+                                <span>Parental Support</span><span id="uiParent" class="font-bold text-white">₹ 0</span>
+                            </div>
+                            <div class="flex justify-between text-xs text-blue-100">
+                                <span>Housing Liability</span><span id="uiHouse" class="font-bold text-white">₹ 0</span>
+                            </div>
+                            <div class="flex justify-between text-xs text-blue-100">
+                                <span>Children's Provision</span><span id="uiChild" class="font-bold text-white">₹ 0</span>
+                            </div>
+                            <div class="flex justify-between text-xs text-blue-100">
+                                <span>Sibling Support</span><span id="uiSib" class="font-bold text-white">₹ 0</span>
+                            </div>
+                        </div>
                     </div>
+                    
                     <div class="bg-white p-5 rounded-2xl border-2 border-red-100">
                         <h3 class="text-red-600 uppercase text-[10px] font-black tracking-widest">Medical "Wealth Drain"</h3>
                         <div id="medDrain" class="text-2xl font-bold text-slate-800">₹ 0</div>
+                        <p class="text-[9px] text-slate-400 mt-1 uppercase">Asset value lost to chronic care.</p>
                     </div>
+
+                    <div class="bg-white p-5 rounded-2xl border-2 border-green-100">
+                        <h3 class="text-green-600 uppercase text-[10px] font-black tracking-widest">Identified Assets (Deductions)</h3>
+                        <div id="uiAssets" class="text-2xl font-bold text-slate-800">₹ 0</div>
+                        <p id="uiSpouseAssets" class="text-[10px] text-slate-500 mt-1 italic hidden"></p>
+                    </div>
+
                     <div class="gap-card text-white p-8 rounded-3xl shadow-xl border-b-8 border-red-900">
                         <h3 class="text-red-200 uppercase text-xs font-black tracking-widest">Recommended Net Cover</h3>
                         <div id="totalGap" class="text-5xl font-black mb-4 tracking-tighter">₹ 0</div>
                         <p class="text-red-100 text-xs opacity-90 italic">Audit by Chandramohan (9791004920).</p>
                     </div>
+                    
                     <div class="bg-white p-4 rounded-xl text-center no-print border shadow-sm">
                         <a href="https://wa.me/919791004920?text=Hi%20Chandramohan,%20I%20have%20completed%20the%20HLV%20Audit." class="inline-block w-full bg-green-600 text-white py-3 rounded-xl font-bold hover:bg-green-700">Discuss on WhatsApp</a>
                     </div>
@@ -294,39 +323,41 @@
         }
 
         function generateChildren() {
-    const count = parseInt(document.getElementById('numChildren').value) || 0;
-    const container = document.getElementById('childContainer');
-    container.innerHTML = '';
-    for (let i = 1; i <= count; i++) {
-        container.innerHTML += `
-        <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm space-y-3 child-block">
-            <p class="text-blue-700 font-bold text-[10px] uppercase">Child ${i} Details</p>
-            <div class="grid grid-cols-2 gap-3">
-                <div><span class="caption-text">Age</span><input type="number" class="c-age" value="5" oninput="deepCalc()"></div>
-                <div><span class="caption-text">Sex</span><select class="c-gen" onchange="deepCalc()"><option value="female">Daughter</option><option value="male">Son</option></select></div>
-            </div>
-            <div class="grid grid-cols-2 gap-3">
-                <div><span class="caption-text">Monthly Med. Care (₹)</span><input type="number" class="c-med" value="0" oninput="deepCalc()"></div>
-                <div><span class="caption-text">Milestone Age (Edu/Mar)</span><input type="number" class="c-mstone-age" value="21" oninput="deepCalc()"></div>
-            </div>
-            <div><span class="caption-text">Milestone Lump Sum Req. (₹)</span><input type="number" class="c-mstone-amt" value="2000000" oninput="deepCalc()"></div>
-        </div>`;
-    }
-    deepCalc();
-}
+            const count = parseInt(document.getElementById('numChildren').value) || 0;
+            const container = document.getElementById('childContainer');
+            container.innerHTML = '';
+            for (let i = 1; i <= count; i++) {
+                container.innerHTML += `
+                <div class="bg-white p-4 rounded-lg border border-slate-200 shadow-sm space-y-3 child-block">
+                    <p class="text-blue-700 font-bold text-[10px] uppercase">Child ${i} Details</p>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div><label class="text-xs">Age</label><input type="number" class="c-age" value="5" oninput="deepCalc()"></div>
+                        <div><label class="text-xs">Sex</label><select class="c-gen" onchange="deepCalc()"><option value="female">Daughter</option><option value="male">Son</option></select></div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div><label class="text-xs">Monthly Med. Care (₹)</label><input type="number" class="c-med" value="0" oninput="deepCalc()"></div>
+                        <div><label class="text-xs">Milestone Age (Edu/Mar)</label><input type="number" class="c-mstone-age" value="21" oninput="deepCalc()"></div>
+                    </div>
+                    <div><label class="text-xs">Milestone Lump Sum Req. (₹)</label><input type="number" class="c-mstone-amt" value="2000000" oninput="deepCalc()"></div>
+                </div>`;
+            }
+            deepCalc();
+        }
 
         function deepCalc() {
             const age = parseInt(document.getElementById('userAge').value) || 35;
             const income = parseInt(document.getElementById('userIncome').value) || 0;
-            const sIncome = (document.getElementById('maritalStatus').value === 'married') ? (parseInt(document.getElementById('spouseIncome').value) || 0) : 0;
+            const isMarried = document.getElementById('maritalStatus').value === 'married';
+            const sIncome = isMarried ? (parseInt(document.getElementById('spouseIncome').value) || 0) : 0;
             const cityMult = parseFloat(document.getElementById('cityTier').value);
-			const roi = 0.08, gInf = 0.06, medInf = 0.10;
-    		const realRate = (roi - gInf) / (1 + gInf);
-    		const medRealRate = (roi - medInf) / (1 + medInf);
+            
+            const roi = 0.08, gInf = 0.06, medInf = 0.10;
+            const realRate = (roi - gInf) / (1 + gInf);
+            const medRealRate = (roi - medInf) / (1 + medInf);
 
-            // 1. Income Replacement (Net of Spouse Contribution)
+            // 1. Income Replacement
             let replacementNeeded = Math.max(0, ((income + sIncome) * 12 * 0.7) - (sIncome * 12)); 
-	    let hlvIncome = replacementNeeded * ((1 - Math.pow(1 + realRate, -(60 - age))) / realRate);
+            let hlvIncome = replacementNeeded * ((1 - Math.pow(1 + realRate, -(60 - age))) / realRate);
 
             // 2. Parents
             let parentFund = 0;
@@ -338,14 +369,14 @@
                 parentFund = ((parseFloat(document.getElementById('parentMonthly').value) || 0) * 12 * mult * ((1 - Math.pow(1 + realRate, -(85 - pAge))) / realRate));
             }
 
-            // 3. Housing (FULL RESTORED MATH)
+            // 3. Housing
             let liability = 0;
             const planBuy = document.querySelector('input[name="planBuy"]:checked').value;
             if (planBuy === 'yes') {
                 const base = parseFloat(document.getElementById('propType').value);
                 const micro = parseFloat(document.getElementById('microSetting').value);
                 const years = parseInt(document.getElementById('buyInYears').value) || 0;
-                liability = (base * cityMult * micro) * Math.pow(1.06, years) * 0.8;
+                liability = (base * cityMult * micro) * Math.pow(1 + gInf, years) * 0.8;
             } else if (document.querySelector('input[name="isLoaned"]:checked').value === 'yes') {
                 const principal = parseFloat(document.getElementById('loanPrincipal').value) || 0;
                 const r = (parseFloat(document.getElementById('loanInt').value) || 9) / 1200;
@@ -359,66 +390,87 @@
                 }
             }
 
-            // 4. Family Commitments
-            let eduCorpus = 0;
-            document.querySelectorAll('.c-age').forEach((el) => {
-                let yTo18 = 18 - parseInt(el.value);
-                if(yTo18 > 0) eduCorpus += (2500000 * Math.pow(1.10, yTo18)) / Math.pow(1.08, yTo18);
-            });
+            // 4. Siblings
             const sibTotal = (parseFloat(document.getElementById('sibMarriage').value) || 0) + (parseFloat(document.getElementById('sibEdu').value) || 0) + (parseFloat(document.getElementById('sibBuf').value) || 0);
-            
-	    let monthlyMed = parseFloat(document.getElementById('monthlyMedSpend').value) || 0;
+
+            // 5. Children
+            let eduCorpus = 0;
+            let totalChildLiabilities = 0;
+            if(isMarried) {
+                document.querySelectorAll('.child-block').forEach(block => {
+                    const cAge = parseInt(block.querySelector('.c-age').value) || 0;
+                    const cMed = parseFloat(block.querySelector('.c-med').value) || 0;
+                    const mAge = parseInt(block.querySelector('.c-mstone-age').value) || 21;
+                    const mAmt = parseFloat(block.querySelector('.c-mstone-amt').value) || 0;
+                    
+                    let yTo18 = 18 - cAge;
+                    if(yTo18 > 0) eduCorpus += (2500000 * Math.pow(1 + medInf, yTo18)) / Math.pow(1 + roi, yTo18);
+
+                    const medYears = Math.max(0, 25 - cAge);
+                    totalChildLiabilities += (cMed * 12) * ((1 - Math.pow(1 + medRealRate, -medYears)) / medRealRate);
+                    
+                    const yearsToMstone = Math.max(0, mAge - cAge);
+                    const inflatedMstone = mAmt * Math.pow(1 + gInf, yearsToMstone);
+                    totalChildLiabilities += inflatedMstone / Math.pow(1 + roi, yearsToMstone);
+                });
+            }
+            const fullChildNeed = eduCorpus + totalChildLiabilities;
+
+            // 6. Medical Drain
+            let monthlyMed = parseFloat(document.getElementById('monthlyMedSpend').value) || 0;
             document.querySelectorAll('.med-cond:checked').forEach(c => {monthlyMed += parseFloat(c.value);});
-	    const medRealRate = (roi - 0.10) / 1.10;
-	    const medDrain = (monthlyMed * 12) * ((1 - Math.pow(1 + medRealRate, -(60 - age))) / medRealRate);
+            let medDrain = (monthlyMed * 12) * ((1 - Math.pow(1 + medRealRate, -(60 - age))) / medRealRate);
+            const longevity = parseFloat(document.getElementById('longevityFactor').value) || 1.0;
+            medDrain *= longevity;
 
-			// 5. NEW: CHILDREN'S DETAILED MATH
-    let totalChildLiabilities = 0;
-    document.querySelectorAll('.child-block').forEach(block => {
-        const cAge = parseInt(block.querySelector('.c-age').value) || 0;
-        const cMed = parseFloat(block.querySelector('.c-med').value) || 0;
-        const mAge = parseInt(block.querySelector('.c-mstone-age').value) || 21;
-        const mAmt = parseFloat(block.querySelector('.c-mstone-amt').value) || 0;
-        
-        // Continuous Medical Care (Until age 25)
-        const medYears = Math.max(0, 25 - cAge);
-        totalChildLiabilities += (cMed * 12) * ((1 - Math.pow(1 + medRealRate, -medYears)) / medRealRate);
-        
-        // Milestone Lump Sum (Discounted to Present Value)
-        const yearsToMstone = Math.max(0, mAge - cAge);
-        const inflatedMstone = mAmt * Math.pow(1 + gInf, yearsToMstone);
-        totalChildLiabilities += inflatedMstone / Math.pow(1 + roi, yearsToMstone);
-    });
+            // 7. Assets Logic
+            const inheritAmt = parseFloat(document.getElementById('inheritAmt').value) || 0;
+            const inheritYrs = parseInt(document.getElementById('inheritYrs').value) || 1;
+            const pvInherit = inheritAmt / Math.pow(1 + roi, inheritYrs);
 
-            // 5. Assets Deduction
+            const baseAssets = (parseFloat(document.getElementById('assetLiquid').value) || 0) + 
+                               (parseFloat(document.getElementById('assetMarket').value) || 0) + 
+                               (parseFloat(document.getElementById('currentLIC').value) || 0) + pvInherit;
 
-			// 6. NEW: SPOUSE ASSETS MATH
-    const sEPF = parseFloat(document.getElementById('spouseEPF').value) || 0;
-    const sEPFAnnual = parseFloat(document.getElementById('spouseEPFAnnual').value) || 0;
-    const sAge = parseInt(document.getElementById('spouseAge').value) || 35;
-    const sGroupIns = parseFloat(document.getElementById('spouseGroupIns').value) || 0;
-    
-    // Future Value of EPF (Simplified projection to retirement)
-    const sYearsToRetire = Math.max(0, 60 - sAge);
-    const projectedEPF = sEPF * Math.pow(1 + roi, sYearsToRetire) + 
-                         sEPFAnnual * ((Math.pow(1 + roi, sYearsToRetire) - 1) / roi);
-    const pvSpouseEPF = projectedEPF / Math.pow(1 + roi, sYearsToRetire); // Back to PV
+            let pvSpouseEPF = 0;
+            let sGroupIns = 0;
+            
+            if (isMarried) {
+                const sEPF = parseFloat(document.getElementById('spouseEPF').value) || 0;
+                const sEPFAnnual = parseFloat(document.getElementById('spouseEPFAnnual').value) || 0;
+                const sAge = parseInt(document.getElementById('spouseAge').value) || 35;
+                sGroupIns = parseFloat(document.getElementById('spouseGroupIns').value) || 0;
+                
+                const sYearsToRetire = Math.max(0, 60 - sAge);
+                let projectedEPF = sEPF * Math.pow(1 + roi, sYearsToRetire);
+                if(roi > 0) projectedEPF += sEPFAnnual * ((Math.pow(1 + roi, sYearsToRetire) - 1) / roi);
+                pvSpouseEPF = projectedEPF / Math.pow(1 + roi, sYearsToRetire);
+                
+                document.getElementById('uiSpouseAssets').innerText = `Includes ₹${Math.round(pvSpouseEPF + sGroupIns).toLocaleString('en-IN')} from Spouse EPF/Insurance`;
+                document.getElementById('uiSpouseAssets').classList.remove('hidden');
+            } else {
+                document.getElementById('uiSpouseAssets').classList.add('hidden');
+            }
 
-			
-            const totalAssets = (parseFloat(document.getElementById('assetLiquid').value) || 0) + 
-                    (parseFloat(document.getElementById('assetMarket').value) || 0) + 
-                    (parseFloat(document.getElementById('currentLIC').value) || 0) + 
-                    ((parseFloat(document.getElementById('inheritAmt').value) || 0) / Math.pow(1.08, parseInt(document.getElementById('inheritYrs').value) || 1)) +
-                    sGroupIns + 
-                    pvSpouseEPF;
-            const totalNeed = hlvIncome + parentFund + liability + sibTotal + totalChildLiabilities + medDrain;
-			
+            const totalAssets = baseAssets + sGroupIns + pvSpouseEPF;
+
+            // 8. Totals
+            const totalNeed = hlvIncome + parentFund + liability + sibTotal + fullChildNeed + medDrain;
             const gap = Math.max(0, totalNeed - totalAssets);
 
+            // Display
             const fmt = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 });
             document.getElementById('totalNeed').innerText = fmt.format(Math.round(totalNeed));
             document.getElementById('medDrain').innerText = fmt.format(Math.round(medDrain));
+            document.getElementById('uiAssets').innerText = fmt.format(Math.round(totalAssets));
             document.getElementById('totalGap').innerText = fmt.format(Math.round(gap));
+            
+            // Ledger Display
+            document.getElementById('uiIncome').innerText = fmt.format(Math.round(hlvIncome));
+            document.getElementById('uiParent').innerText = fmt.format(Math.round(parentFund));
+            document.getElementById('uiHouse').innerText = fmt.format(Math.round(liability));
+            document.getElementById('uiChild').innerText = fmt.format(Math.round(fullChildNeed));
+            document.getElementById('uiSib').innerText = fmt.format(Math.round(sibTotal));
         }
     </script>
 </body>

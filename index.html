@@ -297,55 +297,90 @@
                 </div>
             </div>
 
-            <div class="lg:col-span-5">
-                <div class="sticky top-8 space-y-4">
+            <div class="sticky top-8 space-y-4">
                     
-                    <div class="result-card text-white p-6 rounded-3xl shadow-xl">
-                        <h3 class="text-blue-200 uppercase text-[10px] font-black tracking-widest mb-1">Gross Family Liability</h3>
-                        <div id="totalNeed" class="text-4xl font-black mb-3">₹ 0</div>
+                    <div id="standardResultsBlock" class="space-y-4">
+                        <div class="result-card text-white p-6 rounded-3xl shadow-xl">
+                            <h3 class="text-blue-200 uppercase text-[10px] font-black tracking-widest mb-1">Gross Family Liability</h3>
+                            <div id="totalNeed" class="text-4xl font-black mb-3">₹ 0</div>
+                            
+                            <div class="space-y-2 mt-4 pt-4 border-t border-blue-400">
+                                <div class="flex justify-between text-xs text-blue-100">
+                                    <span>Income Replacement</span><span id="uiIncome" class="font-bold text-white">₹ 0</span>
+                                </div>
+                                <div class="flex justify-between text-xs text-blue-100">
+                                    <span>Parental Support</span><span id="uiParent" class="font-bold text-white">₹ 0</span>
+                                </div>
+                                <div class="flex justify-between text-xs text-blue-100">
+                                    <span>Housing Liability</span><span id="uiHouse" class="font-bold text-white">₹ 0</span>
+                                </div>
+                                <div class="flex justify-between text-xs text-blue-100">
+                                    <span>Children's Provision</span><span id="uiChild" class="font-bold text-white">₹ 0</span>
+                                </div>
+                                <div class="flex justify-between text-xs text-blue-100">
+                                    <span>Sibling Support</span><span id="uiSib" class="font-bold text-white">₹ 0</span>
+                                </div>
+                            </div>
+                        </div>
                         
-                        <div class="space-y-2 mt-4 pt-4 border-t border-blue-400">
-                            <div class="flex justify-between text-xs text-blue-100">
-                                <span>Income Replacement</span><span id="uiIncome" class="font-bold text-white">₹ 0</span>
+                        <div class="bg-white p-5 rounded-2xl border-2 border-red-100">
+                            <h3 class="text-red-600 uppercase text-[10px] font-black tracking-widest">Medical "Wealth Drain"</h3>
+                            <div id="medDrain" class="text-2xl font-bold text-slate-800">₹ 0</div>
+                            <p class="text-[9px] text-slate-400 mt-1 uppercase">Asset value lost to chronic care.</p>
+                        </div>
+
+                        <div class="bg-white p-5 rounded-2xl border-2 border-green-100">
+                            <h3 class="text-green-600 uppercase text-[10px] font-black tracking-widest">Identified Assets (Deductions)</h3>
+                            <div id="uiAssets" class="text-2xl font-bold text-slate-800">₹ 0</div>
+                            <p id="uiSpouseAssets" class="text-[10px] text-slate-500 mt-1 italic hidden"></p>
+                        </div>
+
+                        <div class="gap-card text-white p-8 rounded-3xl shadow-xl border-b-8 border-red-900">
+                            <h3 class="text-red-200 uppercase text-xs font-black tracking-widest">Recommended Net Cover</h3>
+                            <div id="totalGap" class="text-5xl font-black mb-4 tracking-tighter">₹ 0</div>
+                            <p class="text-red-100 text-xs opacity-90 italic">Audit by Chandramohan (9791004920).</p>
+                        </div>
+                    </div>
+
+                    <div id="singleSurvivalBlock" class="hidden space-y-4">
+                        <div class="bg-slate-800 text-white p-8 rounded-3xl shadow-xl border-b-8 border-slate-600">
+                            <h3 class="text-slate-300 uppercase text-[10px] font-black tracking-widest mb-2">Personal Risk Assessment</h3>
+                            <p class="text-sm font-medium mb-4 leading-relaxed">As a single individual with no current dependents or housing debt, your requirement for traditional Life Insurance (Death Benefit) is currently <strong class="text-white">₹0</strong>.</p>
+                            
+                            <div class="bg-slate-900 p-4 rounded-xl mb-4 border border-slate-700">
+                                <p class="text-xs text-slate-400 uppercase font-bold mb-1">Estimated Lifetime Survival Corpus</p>
+                                <div id="survivalCorpus" class="text-3xl font-black text-white">₹ 0</div>
+                                <p class="text-[10px] text-slate-500 mt-1 italic">Based on your age and city tier, covering basic living expenses and a ₹10L medical buffer.</p>
                             </div>
-                            <div class="flex justify-between text-xs text-blue-100">
-                                <span>Parental Support</span><span id="uiParent" class="font-bold text-white">₹ 0</span>
+
+                            <div class="bg-slate-900 p-4 rounded-xl border border-slate-700">
+                                <p class="text-xs text-slate-400 uppercase font-bold mb-1">Your Current Wealth</p>
+                                <div id="survivalAssets" class="text-2xl font-bold text-green-400">₹ 0</div>
                             </div>
-                            <div class="flex justify-between text-xs text-blue-100">
-                                <span>Housing Liability</span><span id="uiHouse" class="font-bold text-white">₹ 0</span>
+                        </div>
+
+                        <div id="statusSafe" class="hidden bg-green-50 p-6 rounded-2xl border-2 border-green-200 shadow-sm text-center">
+                            <svg class="w-12 h-12 text-green-500 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            <h3 class="text-green-800 font-black text-lg">You are safe and well positioned!</h3>
+                            <p class="text-green-700 text-xs mt-2 font-medium">Your current wealth generates enough to cover your estimated lifetime expenses. Focus on wealth preservation.</p>
+                        </div>
+
+                        <div id="statusWarning" class="hidden bg-orange-50 p-6 rounded-2xl border-2 border-orange-200 shadow-sm text-center">
+                            <svg class="w-12 h-12 text-orange-500 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                            <h3 class="text-orange-800 font-black text-lg">Wealth Accumulation Required</h3>
+                            <p class="text-orange-700 text-xs mt-2 font-medium mb-3">Your assets currently fall short of your estimated lifetime survival needs.</p>
+                            <div class="bg-white p-3 rounded-lg border border-orange-100">
+                                <p class="text-[10px] text-slate-500 font-bold uppercase mb-1">Survival Gap</p>
+                                <div id="survivalGap" class="text-xl font-black text-red-600">₹ 0</div>
                             </div>
-                            <div class="flex justify-between text-xs text-blue-100">
-                                <span>Children's Provision</span><span id="uiChild" class="font-bold text-white">₹ 0</span>
-                            </div>
-                            <div class="flex justify-between text-xs text-blue-100">
-                                <span>Sibling Support</span><span id="uiSib" class="font-bold text-white">₹ 0</span>
-                            </div>
+                            <p class="text-orange-800 text-xs mt-3 font-bold italic">Recommendation: Prioritize comprehensive Health Insurance immediately and begin aggressive wealth accumulation.</p>
                         </div>
                     </div>
                     
-                    <div class="bg-white p-5 rounded-2xl border-2 border-red-100">
-                        <h3 class="text-red-600 uppercase text-[10px] font-black tracking-widest">Medical "Wealth Drain"</h3>
-                        <div id="medDrain" class="text-2xl font-bold text-slate-800">₹ 0</div>
-                        <p class="text-[9px] text-slate-400 mt-1 uppercase">Asset value lost to chronic care.</p>
-                    </div>
-
-                    <div class="bg-white p-5 rounded-2xl border-2 border-green-100">
-                        <h3 class="text-green-600 uppercase text-[10px] font-black tracking-widest">Identified Assets (Deductions)</h3>
-                        <div id="uiAssets" class="text-2xl font-bold text-slate-800">₹ 0</div>
-                        <p id="uiSpouseAssets" class="text-[10px] text-slate-500 mt-1 italic hidden"></p>
-                    </div>
-
-                    <div class="gap-card text-white p-8 rounded-3xl shadow-xl border-b-8 border-red-900">
-                        <h3 class="text-red-200 uppercase text-xs font-black tracking-widest">Recommended Net Cover</h3>
-                        <div id="totalGap" class="text-5xl font-black mb-4 tracking-tighter">₹ 0</div>
-                        <p class="text-red-100 text-xs opacity-90 italic">Audit by Chandramohan (9791004920).</p>
-                    </div>
-                    
-                    <div class="bg-white p-4 rounded-xl text-center no-print border shadow-sm">
+                    <div class="bg-white p-4 rounded-xl text-center no-print border shadow-sm mt-4">
                         <a href="https://wa.me/919791004920?text=Hi%20Chandramohan,%20I%20have%20completed%20the%20HLV%20Audit." class="inline-block w-full bg-green-600 text-white py-3 rounded-xl font-bold hover:bg-green-700">Discuss on WhatsApp</a>
                     </div>
                 </div>
-            </div>
         </div>
     </div>
 
@@ -393,7 +428,7 @@
             deepCalc();
         }
 
-        function deepCalc() {
+function deepCalc() {
             const age = parseInt(document.getElementById('userAge').value) || 35;
             const income = parseInt(document.getElementById('userIncome').value) || 0;
             const isMarried = document.getElementById('maritalStatus').value === 'married';
@@ -420,7 +455,6 @@
                 const livingCost = (parseFloat(document.getElementById('parentMonthly').value) || 0) * 12 * mult;
                 const medicalCost = (parseFloat(document.getElementById('parentMedical').value) || 0) * mult;
                 
-                // Living cost uses standard inflation (realRate), Medical uses medical inflation (medRealRate)
                 const livingPV = livingCost > 0 ? (livingCost * ((1 - Math.pow(1 + realRate, -years)) / realRate)) : 0;
                 const medicalPV = medicalCost > 0 ? (medicalCost * ((1 - Math.pow(1 + medRealRate, -years)) / medRealRate)) : 0;
                 
@@ -516,19 +550,52 @@
             const totalNeed = hlvIncome + parentFund + liability + sibTotal + fullChildNeed + medDrain;
             const gap = Math.max(0, totalNeed - totalAssets);
 
-            // Display
+            // 9. EDGE CASE DETECTION (Single, No Parents, Zero Liability)
+            const isEdgeCase = (!isMarried && !fAlive && !mAlive && liability === 0 && sibTotal === 0);
             const fmt = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 });
-            document.getElementById('totalNeed').innerText = fmt.format(Math.round(totalNeed));
-            document.getElementById('medDrain').innerText = fmt.format(Math.round(medDrain));
-            document.getElementById('uiAssets').innerText = fmt.format(Math.round(totalAssets));
-            document.getElementById('totalGap').innerText = fmt.format(Math.round(gap));
-            
-            // Ledger Display
-            document.getElementById('uiIncome').innerText = fmt.format(Math.round(hlvIncome));
-            document.getElementById('uiParent').innerText = fmt.format(Math.round(parentFund));
-            document.getElementById('uiHouse').innerText = fmt.format(Math.round(liability));
-            document.getElementById('uiChild').innerText = fmt.format(Math.round(fullChildNeed));
-            document.getElementById('uiSib').innerText = fmt.format(Math.round(sibTotal));
+
+            if (isEdgeCase) {
+                document.getElementById('standardResultsBlock').classList.add('hidden');
+                document.getElementById('singleSurvivalBlock').classList.remove('hidden');
+
+                // Calculate Personal Survival Corpus (Base living cost scaled by city tier + Medical Buffer)
+                const baseLivingCostMonthly = 15000 * cityMult;
+                const survivalYears = Math.max(0, 80 - age);
+                let survivalCorpus = (baseLivingCostMonthly * 12) * ((1 - Math.pow(1 + realRate, -survivalYears)) / realRate);
+                survivalCorpus += 1000000; // Flat ₹10L Medical Emergency Buffer
+                
+                document.getElementById('survivalCorpus').innerText = fmt.format(Math.round(survivalCorpus));
+                document.getElementById('survivalAssets').innerText = fmt.format(Math.round(totalAssets));
+
+                const survivalGap = Math.max(0, survivalCorpus - totalAssets);
+                
+                if (survivalGap === 0) {
+                    document.getElementById('statusSafe').classList.remove('hidden');
+                    document.getElementById('statusWarning').classList.add('hidden');
+                } else {
+                    document.getElementById('statusWarning').classList.remove('hidden');
+                    document.getElementById('statusSafe').classList.add('hidden');
+                    document.getElementById('survivalGap').innerText = fmt.format(Math.round(survivalGap));
+                }
+
+            } else {
+                // Show Standard Results
+                document.getElementById('standardResultsBlock').classList.remove('hidden');
+                document.getElementById('singleSurvivalBlock').classList.add('hidden');
+
+                // Display
+                document.getElementById('totalNeed').innerText = fmt.format(Math.round(totalNeed));
+                document.getElementById('medDrain').innerText = fmt.format(Math.round(medDrain));
+                document.getElementById('uiAssets').innerText = fmt.format(Math.round(totalAssets));
+                document.getElementById('totalGap').innerText = fmt.format(Math.round(gap));
+                
+                // Ledger Display
+                document.getElementById('uiIncome').innerText = fmt.format(Math.round(hlvIncome));
+                document.getElementById('uiParent').innerText = fmt.format(Math.round(parentFund));
+                document.getElementById('uiHouse').innerText = fmt.format(Math.round(liability));
+                document.getElementById('uiChild').innerText = fmt.format(Math.round(fullChildNeed));
+                document.getElementById('uiSib').innerText = fmt.format(Math.round(sibTotal));
+            }
         }
     </script>
 </body>

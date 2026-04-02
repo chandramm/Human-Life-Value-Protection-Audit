@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .hidden { display: none !important; }
-        /* FIXED: Added explicit height, background-color, and box-sizing to ensure perfectly uniform heights */
+        /* Enforced identical heights and strict box sizing for all inputs */
         input[type="number"], input[type="month"], select { 
             width: 100%; border: 1px solid #e2e8f0; padding: 0.5rem 0.7rem; border-radius: 0.5rem; 
             margin-top: 0.25rem; font-size: 0.95rem; height: 46px; box-sizing: border-box; background-color: #fff;
@@ -281,7 +281,7 @@
                             <input type="number" id="currentLIC" value="0" oninput="deepCalc()">
                         </div>
                         <div class="md:col-span-2 p-3 bg-green-50 rounded-lg">
-                            <label class="block mb-2 text-slate-800 font-bold">Inheritance Expected (through Will deeds and other means)</label>
+                            <label class="block mb-2 text-slate-800 font-bold">Inheritance Expected (Through Will/Deeds)</label>
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
                                     <span class="input-caption">Amount (₹)</span>
@@ -298,10 +298,10 @@
             </div>
 
             <div class="lg:col-span-5 min-w-0 w-full">
-                <div class="sticky top-8 space-y-4">
+                <div class="sticky top-8 space-y-4 w-full">
                     
                     <div id="standardResultsBlock" class="space-y-4">
-                        <div class="result-card text-white p-6 rounded-3xl shadow-xl">
+                        <div class="result-card text-white p-6 rounded-3xl shadow-xl w-full">
                             <h3 class="text-blue-200 uppercase text-[10px] font-black tracking-widest mb-1">Gross Family Liability</h3>
                             <div id="totalNeed" class="text-4xl font-black mb-3">₹ 0</div>
                             
@@ -324,19 +324,19 @@
                             </div>
                         </div>
                         
-                        <div class="bg-white p-5 rounded-2xl border-2 border-red-100">
+                        <div class="bg-white p-5 rounded-2xl border-2 border-red-100 w-full">
                             <h3 class="text-red-600 uppercase text-[10px] font-black tracking-widest">Medical "Wealth Drain"</h3>
                             <div id="medDrain" class="text-2xl font-bold text-slate-800">₹ 0</div>
                             <p class="text-[9px] text-slate-400 mt-1 uppercase">Asset value lost to chronic care.</p>
                         </div>
 
-                        <div class="bg-white p-5 rounded-2xl border-2 border-green-100">
+                        <div class="bg-white p-5 rounded-2xl border-2 border-green-100 w-full">
                             <h3 class="text-green-600 uppercase text-[10px] font-black tracking-widest">Identified Assets (Deductions)</h3>
                             <div id="uiAssets" class="text-2xl font-bold text-slate-800">₹ 0</div>
                             <p id="uiSpouseAssets" class="text-[10px] text-slate-500 mt-1 italic hidden"></p>
                         </div>
 
-                        <div class="gap-card text-white p-8 rounded-3xl shadow-xl border-b-8 border-red-900">
+                        <div class="gap-card text-white p-8 rounded-3xl shadow-xl border-b-8 border-red-900 w-full">
                             <h3 class="text-red-200 uppercase text-xs font-black tracking-widest">Recommended Net Cover</h3>
                             <div id="totalGap" class="text-5xl font-black mb-4 tracking-tighter">₹ 0</div>
                             <p class="text-red-100 text-xs opacity-90 italic">Audit by Chandramohan (9791004920).</p>
@@ -348,10 +348,18 @@
                             <h3 class="text-slate-300 uppercase text-[10px] font-black tracking-widest mb-2">Personal Risk Assessment</h3>
                             <p class="text-sm font-medium mb-4 leading-relaxed">As a single individual with no current dependents or housing debt, your requirement for traditional Life Insurance (Death Benefit) is currently <strong class="text-white">₹0</strong>.</p>
                             
-                            <div class="bg-slate-900 p-4 rounded-xl mb-4 border border-slate-700">
-                                <p class="text-xs text-slate-400 uppercase font-bold mb-1">Estimated Lifetime Survival Corpus</p>
+                            <div class="bg-slate-900 p-4 rounded-xl mb-3 border border-slate-700">
+                                <p class="text-xs text-slate-400 uppercase font-bold mb-1">Base Lifetime Survival Corpus</p>
                                 <div id="survivalCorpus" class="text-3xl font-black text-white">₹ 0</div>
-                                <p class="text-[10px] text-slate-500 mt-1 italic">Based on your age and city tier, covering basic living expenses and a ₹10L medical buffer.</p>
+                                <p class="text-[10px] text-slate-500 mt-1 italic">Covers basic living expenses (based on city tier) and a ₹10L emergency buffer.</p>
+                            </div>
+
+                            <div class="bg-slate-900 p-4 rounded-xl mb-4 border border-red-900/50">
+                                <div class="flex justify-between items-center">
+                                    <p class="text-xs text-red-400 uppercase font-bold">Chronic Medical Drain</p>
+                                    <div id="singleMedDrain" class="text-xl font-black text-red-400">₹ 0</div>
+                                </div>
+                                <p class="text-[10px] text-slate-500 mt-1 italic">Lifetime projected cost of maintaining identified health conditions.</p>
                             </div>
 
                             <div class="bg-slate-900 p-4 rounded-xl border border-slate-700">
@@ -369,7 +377,7 @@
                         <div id="statusWarning" class="hidden bg-orange-50 p-6 rounded-2xl border-2 border-orange-200 shadow-sm text-center">
                             <svg class="w-12 h-12 text-orange-500 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
                             <h3 class="text-orange-800 font-black text-lg">Wealth Accumulation Required</h3>
-                            <p class="text-orange-700 text-xs mt-2 font-medium mb-3">Your assets currently fall short of your estimated lifetime survival needs.</p>
+                            <p class="text-orange-700 text-xs mt-2 font-medium mb-3">Your assets currently fall short of your estimated lifetime survival and medical needs.</p>
                             <div class="bg-white p-3 rounded-lg border border-orange-100">
                                 <p class="text-[10px] text-slate-500 font-bold uppercase mb-1">Survival Gap</p>
                                 <div id="survivalGap" class="text-xl font-black text-red-600">₹ 0</div>
@@ -378,7 +386,7 @@
                         </div>
                     </div>
                     
-                    <div class="bg-white p-4 rounded-xl text-center no-print border shadow-sm mt-4">
+                    <div class="bg-white p-4 rounded-xl text-center no-print border shadow-sm mt-4 w-full">
                         <a href="https://wa.me/919791004920?text=Hi%20Chandramohan,%20I%20have%20completed%20the%20HLV%20Audit." class="inline-block w-full bg-green-600 text-white py-3 rounded-xl font-bold hover:bg-green-700">Discuss on WhatsApp</a>
                     </div>
                 </div>
@@ -566,7 +574,11 @@
                 let survivalCorpus = (baseLivingCostMonthly * 12) * ((1 - Math.pow(1 + realRate, -survivalYears)) / realRate);
                 survivalCorpus += 1000000; // Flat ₹10L Medical Emergency Buffer
                 
+                // Add Medical Drain to the single survival corpus
+                survivalCorpus += medDrain;
+                
                 document.getElementById('survivalCorpus').innerText = fmt.format(Math.round(survivalCorpus));
+                document.getElementById('singleMedDrain').innerText = fmt.format(Math.round(medDrain));
                 document.getElementById('survivalAssets').innerText = fmt.format(Math.round(totalAssets));
 
                 const survivalGap = Math.max(0, survivalCorpus - totalAssets);

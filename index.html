@@ -98,8 +98,9 @@
                             <p class="text-[9px] text-orange-600 mt-1 italic leading-tight">*Do not include interest from assets listed in Section 7 (prevents double-counting).</p>
                         </div>
                         <div>
-                            <span class="input-caption">Monthly Savings / Investments (₹)</span>
-                            <input type="number" id="monthlySavings" value="15000" oninput="deepCalc()">
+                            <span class="input-caption">True Monthly Savings (Auto-Calculated)</span>
+                            <input type="number" id="monthlySavings" value="0" readonly class="bg-slate-100 font-bold cursor-not-allowed">
+                            <p class="text-[9px] text-slate-500 mt-1 italic leading-tight">Calculated: Total Income minus True Demographic Living Costs, EMI, & Support.</p>
                         </div>
                     </div>
                 </div>
@@ -544,12 +545,11 @@
             deepCalc();
         }
 
-        function deepCalc() {
+function deepCalc() {
             const age = parseInt(document.getElementById('userAge').value) || 35;
             const retireAge = parseInt(document.getElementById('retireAge').value) || 60;
             const income = parseInt(document.getElementById('userIncome').value) || 0;
             const passiveIncome = parseInt(document.getElementById('passiveIncome').value) || 0;
-            const monthlySavings = parseInt(document.getElementById('monthlySavings').value) || 0;
             
             const isMarried = document.getElementById('maritalStatus').value === 'married';
             const sIncome = isMarried ? (parseInt(document.getElementById('spouseIncome').value) || 0) : 0;
@@ -561,16 +561,60 @@
             const realRate = (roi - gInf) / (1 + gInf);
             const medRealRate = (roi - medInf) / (1 + medInf);
 
-            // 1. Income Replacement
-            let replacementNeeded = Math.max(0, ((income + sIncome) * 12 * 0.7) - (sIncome * 12) - (passiveIncome * 12)); 
+            // --- NEW: BOTTOM-UP DEMOGRAPHIC LIVING COST ---
+            let baseLivingMonthly = 15000; // Base single adult
+            if (isMarried) baseLivingMonthly += 10000; // Add for spouse
+            const numChildren = parseInt(document.getElementById('numChildren').value) || 0;
+            baseLivingMonthly += (7500 * numChildren); // Add per child
+            
+            baseLivingMonthly = baseLivingMonthly * cityMult; // Scale by city tier
+            let baseExpenseYr = baseLivingMonthly * 12;
+
+            // --- NEW: TRUE CASHFLOW & SAVINGS CALCULATION ---
+            let totalMonthlyOutflow = baseLivingMonthly;
+            totalMonthlyOutflow += parseFloat(document.getElementById('monthlyMedSpend').value) || 0;
+            
+            const fAlive = document.querySelector('input[name="fatherAlive"]:checked').value === 'yes';
+            const mAlive = document.querySelector('input[name="motherAlive"]:checked').value === 'yes';
+            if (fAlive || mAlive) {
+                const pMult = (fAlive && mAlive) ? 1.0 : 0.6;
+                totalMonthlyOutflow += (parseFloat(document.getElementById('parentMonthly').value) || 0) * pMult;
+            }
+
+            let currentEMI = 0;
+            if (document.querySelector('input[name="isLoaned"]')?.checked) {
+                const principal = parseFloat(document.getElementById('loanPrincipal').value) || 0;
+                const r = (parseFloat(document.getElementById('loanInt').value) || 9) / 1200;
+                const tenure = (parseInt(document.getElementById('loanTenure').value) || 20) * 12;
+                const start = new Date(document.getElementById('loanStart').value + "-01");
+                const passed = Math.max(0, (new Date().getFullYear() - start.getFullYear()) * 12 + (new Date().getMonth() - start.getMonth()));
+                const left = tenure - passed;
+                if (r > 0 && left > 0) {
+                    currentEMI = principal * r * Math.pow(1 + r, tenure) / (Math.pow(1 + r, tenure) - 1);
+                    totalMonthlyOutflow += currentEMI;
+                }
+            }
+
+            let totalMonthlyIncome = income + sIncome + passiveIncome;
+            let actualMonthlySavings = totalMonthlyIncome - totalMonthlyOutflow;
+
+            // Update Savings UI Box Color based on surplus or deficit
+            const savingsInput = document.getElementById('monthlySavings');
+            savingsInput.value = Math.round(actualMonthlySavings);
+            if (actualMonthlySavings < 0) {
+                savingsInput.style.color = '#dc2626'; // Red for deficit
+            } else {
+                savingsInput.style.color = '#16a34a'; // Green for surplus
+            }
+
+            // 1. Income Replacement (Now replaces actual base living cost, not a flat 70%)
+            let replacementNeeded = Math.max(0, baseExpenseYr - (sIncome * 12) - (passiveIncome * 12)); 
             let hlvIncome = yearsToRetire > 0 ? replacementNeeded * ((1 - Math.pow(1 + realRate, -yearsToRetire)) / realRate) : 0;
 
             // 2. Parents
             let parentFund = 0;
             let livingPV = 0;
             let medicalPV = 0;
-            const fAlive = document.querySelector('input[name="fatherAlive"]:checked').value === 'yes';
-            const mAlive = document.querySelector('input[name="motherAlive"]:checked').value === 'yes';
             if (fAlive || mAlive) {
                 const mult = (fAlive && mAlive) ? 1.0 : 0.6;
                 const pAge = Math.max(fAlive ? parseInt(document.getElementById('fatherAge').value) : 0, mAlive ? parseInt(document.getElementById('motherAge').value) : 0);
@@ -585,7 +629,7 @@
                 parentFund = livingPV + medicalPV;
             }
 
-            // 3. Housing
+            // 3. Housing (Lump sum liability)
             let liability = 0;
             const planBuy = document.querySelector('input[name="planBuy"]:checked').value;
             if (planBuy === 'yes') {
@@ -593,17 +637,13 @@
                 const micro = parseFloat(document.getElementById('microSetting').value);
                 const years = parseInt(document.getElementById('buyInYears').value) || 0;
                 liability = (base * cityMult * micro) * Math.pow(1 + gInf, years) * 0.8;
-            } else if (document.querySelector('input[name="isLoaned"]:checked').value === 'yes') {
-                const principal = parseFloat(document.getElementById('loanPrincipal').value) || 0;
+            } else if (currentEMI > 0) {
                 const r = (parseFloat(document.getElementById('loanInt').value) || 9) / 1200;
                 const tenure = (parseInt(document.getElementById('loanTenure').value) || 20) * 12;
                 const start = new Date(document.getElementById('loanStart').value + "-01");
                 const passed = Math.max(0, (new Date().getFullYear() - start.getFullYear()) * 12 + (new Date().getMonth() - start.getMonth()));
                 const left = tenure - passed;
-                if (r > 0 && left > 0) {
-                    const emi = principal * r * Math.pow(1 + r, tenure) / (Math.pow(1 + r, tenure) - 1);
-                    liability = emi * (Math.pow(1 + r, left) - 1) / (r * Math.pow(1 + r, left));
-                }
+                liability = currentEMI * (Math.pow(1 + r, left) - 1) / (r * Math.pow(1 + r, left));
             }
 
             // 4. Siblings
@@ -678,7 +718,7 @@
             const totalNeed = hlvIncome + parentFund + liability + sibTotal + fullChildNeed + medDrain;
             const gap = Math.max(0, totalNeed - totalAssets);
 
-            // 9. EDGE CASE DETECTION (Single, No Parents, Zero Liability)
+            // 9. EDGE CASE DETECTION
             const isEdgeCase = (!isMarried && !fAlive && !mAlive && liability === 0 && sibTotal === 0);
             const fmt = new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 });
 
@@ -686,9 +726,8 @@
                 document.getElementById('standardResultsBlock').classList.add('hidden');
                 document.getElementById('singleSurvivalBlock').classList.remove('hidden');
 
-                const baseLivingCostMonthly = 15000 * cityMult;
                 const survivalYears = Math.max(0, 85 - age);
-                let survivalCorpus = (baseLivingCostMonthly * 12) * ((1 - Math.pow(1 + realRate, -survivalYears)) / realRate);
+                let survivalCorpus = baseExpenseYr * ((1 - Math.pow(1 + realRate, -survivalYears)) / realRate);
                 survivalCorpus += 1000000; 
                 survivalCorpus += medDrain;
                 
@@ -708,35 +747,27 @@
                 }
 
             } else {
-                // Show Standard Results
                 document.getElementById('standardResultsBlock').classList.remove('hidden');
                 document.getElementById('singleSurvivalBlock').classList.add('hidden');
 
-                // Display Header Totals
                 document.getElementById('totalNeed').innerText = fmt.format(Math.round(totalNeed));
                 document.getElementById('medDrain').innerText = fmt.format(Math.round(medDrain));
                 document.getElementById('uiAssets').innerText = fmt.format(Math.round(totalAssets));
                 document.getElementById('totalGap').innerText = fmt.format(Math.round(gap));
                 
-                // Ledger Itemized Breakdown Display
                 document.getElementById('uiIncome').innerText = fmt.format(Math.round(hlvIncome));
-                
                 document.getElementById('uiParent').innerText = fmt.format(Math.round(parentFund));
                 document.getElementById('uiParentLiv').innerText = fmt.format(Math.round(livingPV));
                 document.getElementById('uiParentMed').innerText = fmt.format(Math.round(medicalPV));
-                
                 document.getElementById('uiHouse').innerText = fmt.format(Math.round(liability));
-                
                 document.getElementById('uiChild').innerText = fmt.format(Math.round(fullChildNeed));
                 document.getElementById('uiChildEdu').innerText = fmt.format(Math.round(eduCorpus));
                 document.getElementById('uiChildMstone').innerText = fmt.format(Math.round(totalChildLiabilities));
-                
                 document.getElementById('uiSib').innerText = fmt.format(Math.round(sibTotal));
                 document.getElementById('uiSibMar').innerText = fmt.format(Math.round(sibMarVal));
                 document.getElementById('uiSibEdu').innerText = fmt.format(Math.round(sibEduVal));
                 document.getElementById('uiSibBuf').innerText = fmt.format(Math.round(sibBufVal));
 
-                // Asset Itemized Breakdown Display
                 document.getElementById('uiAssetLiquid').innerText = fmt.format(Math.round(assetLiqMktTotal));
                 document.getElementById('uiAssetLic').innerText = fmt.format(Math.round(currentLICVal));
                 document.getElementById('uiAssetInherit').innerText = fmt.format(Math.round(pvInherit));
@@ -748,7 +779,7 @@
                     document.getElementById('uiSpouseAssetsBox').classList.add('hidden');
                 }
 
-                // 10. GENERATE FORECAST TABLE 
+                // 10. GENERATE FORECAST TABLE (Now uses actual calculated savings)
                 let forecastHTML = `<table class="w-full mt-3 text-xs text-left text-slate-200">
                     <thead><tr class="border-b border-slate-600"><th class="pb-1">Timeline</th><th class="pb-1">Proj. Assets</th><th class="pb-1">Proj. Need</th><th class="pb-1 text-right">Net Gap</th></tr></thead>
                     <tbody>`;
@@ -759,7 +790,11 @@
                 intervals.forEach(t => {
                     if (t < yearsToRetire) {
                         showForecast = true;
-                        const fvAssets = totalAssets * Math.pow(1 + roi, t) + (monthlySavings * 12) * ((Math.pow(1 + roi, t) - 1) / roi);
+                        // Future Assets dynamically increases OR decreases based on actual cashflow
+                        let fvAssets = totalAssets * Math.pow(1 + roi, t);
+                        if (actualMonthlySavings !== 0) {
+                            fvAssets += (actualMonthlySavings * 12) * ((Math.pow(1 + roi, t) - 1) / roi);
+                        }
                         
                         const remainingYTR = yearsToRetire - t;
                         const futureHLV = remainingYTR > 0 ? (replacementNeeded * Math.pow(1 + gInf, t)) * ((1 - Math.pow(1 + realRate, -remainingYTR)) / realRate) : 0;
@@ -768,7 +803,7 @@
                         
                         const projectedGap = Math.max(0, projectedNeed - fvAssets);
                         
-                        forecastHTML += `<tr class="border-b border-slate-700/50"><td class="py-1.5">Year ${t}</td><td>${fmt.format(Math.round(fvAssets))}</td><td>${fmt.format(Math.round(projectedNeed))}</td><td class="text-red-400 font-bold text-right">${fmt.format(Math.round(projectedGap))}</td></tr>`;
+                        forecastHTML += `<tr class="border-b border-slate-700/50"><td class="py-1.5">Year ${t}</td><td class="${fvAssets < 0 ? 'text-red-400' : ''}">${fmt.format(Math.round(fvAssets))}</td><td>${fmt.format(Math.round(projectedNeed))}</td><td class="text-red-400 font-bold text-right">${fmt.format(Math.round(projectedGap))}</td></tr>`;
                     }
                 });
                 forecastHTML += `</tbody></table>`;
@@ -779,24 +814,17 @@
                 } else {
                     document.getElementById('forecastBox').classList.add('hidden');
                 }
+            }
 
-                // 11. GENERATE LIFECYCLE CHART (Dual Y-Axis & Net Target Wealth)
+            // 11. GENERATE LIFECYCLE CHART
+            if (document.getElementById('lifecycleChartBox')) {
                 document.getElementById('lifecycleChartBox').classList.remove('hidden');
                 
                 const chartLabels = [];
                 const incomeLine = [];
                 const expenseLine = [];
                 const targetCorpusLine = [];
-                
-                // Determine base family living expenses
-                let baseExpenseYr = 0;
-                if (isEdgeCase) {
-                    baseExpenseYr = (15000 * cityMult) * 12; // Single survival base
-                } else {
-                    baseExpenseYr = ((income + sIncome) * 12 * 0.7); // Standard family base (70% of income)
-                }
 
-                // Pre-calculate every year's exact cash flow to Age 85
                 const yearlyExpenses = [];
                 for (let a = age; a <= 85; a++) {
                     let t = a - age;
@@ -816,7 +844,6 @@
                                 const cAge = parseInt(block.querySelector('.c-age').value) || 0;
                                 const mAge = parseInt(block.querySelector('.c-mstone-age').value) || 21;
                                 const mAmt = parseFloat(block.querySelector('.c-mstone-amt').value) || 0;
-                                // If the child hits the milestone age this year, add the massive spike
                                 if (cAge + t === mAge) {
                                     exp += mAmt * Math.pow(1 + gInf, t);
                                 }
@@ -826,12 +853,10 @@
                     yearlyExpenses.push(exp);
                 }
 
-                // Populate chart arrays (sampling every 2 years for a clean X-axis)
                 for (let t = 0; t <= 85 - age; t += 2) {
                     let currentAge = age + t;
                     chartLabels.push("Age " + currentAge);
                     
-                    // 1. Income Line
                     let plotIncome = 0;
                     if (currentAge <= retireAge) {
                         plotIncome = ((income + sIncome) * 12) * Math.pow(1 + gInf, t);
@@ -839,21 +864,14 @@
                         plotIncome = (passiveIncome * 12) * Math.pow(1 + gInf, t);
                     }
                     incomeLine.push(Math.round(plotIncome));
-                    
-                    // 2. Expense Line
                     expenseLine.push(Math.round(yearlyExpenses[t]));
                     
-                    // 3. True Target Corpus (PV of Future Expenses MINUS PV of Future Income)
                     let pvFutureExpenses = 0;
                     let pvFutureIncome = 0;
-
                     for (let future = t; future <= 85 - age; future++) {
-                        let yearsAhead = future - t; // Discounting back to 'currentAge'
-                        
-                        // Future Expenses
+                        let yearsAhead = future - t; 
                         pvFutureExpenses += yearlyExpenses[future] / Math.pow(1 + roi, yearsAhead);
                         
-                        // Future Income
                         let futureAge = age + future;
                         let futureInc = 0;
                         if (futureAge <= retireAge) {
@@ -864,17 +882,12 @@
                         pvFutureIncome += futureInc / Math.pow(1 + roi, yearsAhead);
                     }
                     
-                    // The minimum required savings is the shortfall between what they will spend and what they will earn
                     let requiredCorpus = Math.max(0, pvFutureExpenses - pvFutureIncome);
                     targetCorpusLine.push(Math.round(requiredCorpus));
                 }
 
-                // Destroy old chart if it exists so they don't overlap
-                if (myChart != null) {
-                    myChart.destroy();
-                }
+                if (myChart != null) { myChart.destroy(); }
 
-                // Draw the new chart with Dual Y-Axes
                 const ctx = document.getElementById('cashflowChart').getContext('2d');
                 myChart = new Chart(ctx, {
                     type: 'line',
@@ -882,37 +895,13 @@
                         labels: chartLabels,
                         datasets: [
                             {
-                                label: 'Projected Income',
-                                data: incomeLine,
-                                borderColor: '#16a34a', // Green
-                                backgroundColor: 'rgba(22, 163, 74, 0.1)',
-                                borderWidth: 2,
-                                fill: true,
-                                tension: 0.3,
-                                pointRadius: 0,
-                                yAxisID: 'y' // Left Axis
+                                label: 'Projected Income', data: incomeLine, borderColor: '#16a34a', backgroundColor: 'rgba(22, 163, 74, 0.1)', borderWidth: 2, fill: true, tension: 0.3, pointRadius: 0, yAxisID: 'y'
                             },
                             {
-                                label: 'Projected Expenses',
-                                data: expenseLine,
-                                borderColor: '#dc2626', // Red
-                                backgroundColor: 'rgba(220, 38, 38, 0.1)',
-                                borderWidth: 2,
-                                fill: true,
-                                tension: 0.3,
-                                pointRadius: 3,
-                                yAxisID: 'y' // Left Axis
+                                label: 'Projected Expenses', data: expenseLine, borderColor: '#dc2626', backgroundColor: 'rgba(220, 38, 38, 0.1)', borderWidth: 2, fill: true, tension: 0.3, pointRadius: 3, yAxisID: 'y'
                             },
                             {
-                                label: 'Target Wealth Corpus',
-                                data: targetCorpusLine,
-                                borderColor: '#8b5cf6', // Purple
-                                borderDash: [5, 5],
-                                borderWidth: 2,
-                                fill: false,
-                                tension: 0.3,
-                                pointRadius: 0,
-                                yAxisID: 'y1' // Right Axis
+                                label: 'Target Wealth Corpus', data: targetCorpusLine, borderColor: '#8b5cf6', borderDash: [5, 5], borderWidth: 2, fill: false, tension: 0.3, pointRadius: 0, yAxisID: 'y1'
                             }
                         ]
                     },
@@ -921,33 +910,13 @@
                         interaction: { mode: 'index', intersect: false },
                         scales: {
                             y: { 
-                                type: 'linear',
-                                display: true,
-                                position: 'left',
-                                title: { display: true, text: 'Cashflow (₹)', font: {size: 10} },
-                                ticks: {
-                                    callback: function(value) {
-                                        return (value / 100000).toFixed(1) + 'L'; 
-                                    }
-                                }
+                                type: 'linear', display: true, position: 'left', title: { display: true, text: 'Cashflow (₹)', font: {size: 10} },
+                                ticks: { callback: function(value) { return (value / 100000).toFixed(1) + 'L'; } }
                             },
                             y1: {
-                                type: 'linear',
-                                display: true,
-                                position: 'right',
-                                title: { 
-                                    display: true, 
-                                    text: 'Target Wealth (₹)', 
-                                    font: {size: 10, weight: 'bold'},
-                                    color: '#8b5cf6' // NEW: Colors the axis title purple
-                                },
-                                grid: { drawOnChartArea: false }, // Prevents overlapping grid lines
-                                ticks: {
-                                    color: '#8b5cf6', // NEW: Colors the axis numbers purple
-                                    callback: function(value) {
-                                        return (value / 100000).toFixed(0) + 'L'; 
-                                    }
-                                }
+                                type: 'linear', display: true, position: 'right', title: { display: true, text: 'Target Wealth (₹)', font: {size: 10, weight: 'bold'}, color: '#8b5cf6' },
+                                grid: { drawOnChartArea: false },
+                                ticks: { color: '#8b5cf6', callback: function(value) { return (value / 100000).toFixed(0) + 'L'; } }
                             }
                         },
                         plugins: {
@@ -968,7 +937,6 @@
                 });
             }
         }
-
         // 12. PDF AND EMAIL TRIGGER
         function generatePDFandEmail() {
             // Check if user bypassed the gate somehow

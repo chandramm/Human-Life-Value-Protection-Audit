@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Financial Protection Audit | Chandramohan</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         .hidden { display: none !important; }
         /* Enforced identical heights and strict box sizing for all inputs */
@@ -413,6 +414,11 @@
                             <p class="text-[9px] text-slate-400 mt-0.5 mb-2">Projection based on declared monthly savings & inflation.</p>
                             <div id="forecastContainer"></div>
                         </div>
+                        <div id="lifecycleChartBox" class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm w-full mt-4 hidden">
+                            <h3 class="text-blue-900 uppercase text-[10px] font-black tracking-widest mb-1">Income vs. Expense Lifecycle</h3>
+                            <p class="text-[9px] text-slate-500 mb-4 italic">Visualizing your earning years, retirement drop, and major life milestones.</p>
+                            <canvas id="cashflowChart" height="200"></canvas>
+                        </div>
                     </div>
 
                     <div id="singleSurvivalBlock" class="hidden space-y-4">
@@ -472,6 +478,7 @@
 
     <script>
         // Global variables for Lead Capture
+        let myChart = null; // Holds the chart instance so we can update it
         let clientName = "";
         let clientPhone = "";
 
@@ -772,6 +779,122 @@
                 } else {
                     document.getElementById('forecastBox').classList.add('hidden');
                 }
+
+                // 11. GENERATE LIFECYCLE CHART (Income vs Expenses)
+                document.getElementById('lifecycleChartBox').classList.remove('hidden');
+                
+                const chartLabels = [];
+                const incomeLine = [];
+                const expenseLine = [];
+                
+                // Calculate base living standard based on city tier
+                const baseLivingYr = (15000 * cityMult) * 12; 
+                
+                for (let a = age; a <= 85; a += 2) { // Plot every 2 years to keep chart clean
+                    chartLabels.push("Age " + a);
+                    let yearsFromNow = a - age;
+                    
+                    // 1. Calculate Income Line for this age
+                    let plotIncome = 0;
+                    if (a <= retireAge) {
+                        plotIncome = ((income + sIncome) * 12) * Math.pow(1 + gInf, yearsFromNow);
+                    } else {
+                        plotIncome = (passiveIncome * 12) * Math.pow(1 + gInf, yearsFromNow);
+                    }
+                    incomeLine.push(Math.round(plotIncome));
+                    
+                    // 2. Calculate Base Expense Line for this age
+                    let plotExpense = baseLivingYr * Math.pow(1 + gInf, yearsFromNow);
+                    plotExpense += (monthlyMed * 12) * Math.pow(1 + medInf, yearsFromNow); // Medical drain
+                    
+                    // Add Parent Support if they are still likely alive (assuming up to age 85)
+                    if (fAlive || mAlive) {
+                        const pAge = Math.max(fAlive ? parseInt(document.getElementById('fatherAge').value) : 0, mAlive ? parseInt(document.getElementById('motherAge').value) : 0);
+                        if (pAge + yearsFromNow <= 85) {
+                            const pMult = (fAlive && mAlive) ? 1.0 : 0.6;
+                            plotExpense += ((parseFloat(document.getElementById('parentMonthly').value) || 0) * 12 * pMult) * Math.pow(1 + gInf, yearsFromNow);
+                        }
+                    }
+                    
+                    // Add Child Milestones (Spikes)
+                    if (isMarried) {
+                        document.querySelectorAll('.child-block').forEach(block => {
+                            const cAge = parseInt(block.querySelector('.c-age').value) || 0;
+                            const mAge = parseInt(block.querySelector('.c-mstone-age').value) || 21;
+                            const mAmt = parseFloat(block.querySelector('.c-mstone-amt').value) || 0;
+                            
+                            // If the child hits the milestone age during this 2-year chart window
+                            if (cAge + yearsFromNow === mAge || cAge + yearsFromNow === mAge + 1) {
+                                plotExpense += mAmt * Math.pow(1 + gInf, yearsFromNow);
+                            }
+                        });
+                    }
+                    
+                    expenseLine.push(Math.round(plotExpense));
+                }
+
+                // Destroy old chart if it exists so they don't overlap
+                if (myChart != null) {
+                    myChart.destroy();
+                }
+
+                // Draw the new chart
+                const ctx = document.getElementById('cashflowChart').getContext('2d');
+                myChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: chartLabels,
+                        datasets: [
+                            {
+                                label: 'Projected Income',
+                                data: incomeLine,
+                                borderColor: '#16a34a', // Green
+                                backgroundColor: 'rgba(22, 163, 74, 0.1)',
+                                borderWidth: 2,
+                                fill: true,
+                                tension: 0.3
+                            },
+                            {
+                                label: 'Projected Expenses & Milestones',
+                                data: expenseLine,
+                                borderColor: '#dc2626', // Red
+                                backgroundColor: 'rgba(220, 38, 38, 0.1)',
+                                borderWidth: 2,
+                                fill: true,
+                                tension: 0.3,
+                                pointRadius: 3 // Highlights spikes
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        interaction: { mode: 'index', intersect: false },
+                        scales: {
+                            y: { 
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function(value) {
+                                        return '₹' + (value / 100000).toFixed(1) + 'L'; // Formats as Lakhs for readability
+                                    }
+                                }
+                            }
+                        },
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) { label += ': '; }
+                                        if (context.parsed.y !== null) {
+                                            label += new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(context.parsed.y);
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
             }
         }
 

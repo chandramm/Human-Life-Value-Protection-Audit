@@ -935,9 +935,15 @@
                                 type: 'linear',
                                 display: true,
                                 position: 'right',
-                                title: { display: true, text: 'Target Wealth (₹)', font: {size: 10} },
+                                title: { 
+                                    display: true, 
+                                    text: 'Target Wealth (₹)', 
+                                    font: {size: 10, weight: 'bold'},
+                                    color: '#8b5cf6' // NEW: Colors the axis title purple
+                                },
                                 grid: { drawOnChartArea: false }, // Prevents overlapping grid lines
                                 ticks: {
+                                    color: '#8b5cf6', // NEW: Colors the axis numbers purple
                                     callback: function(value) {
                                         return (value / 100000).toFixed(0) + 'L'; 
                                     }

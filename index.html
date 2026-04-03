@@ -780,57 +780,77 @@
                     document.getElementById('forecastBox').classList.add('hidden');
                 }
 
-                // 11. GENERATE LIFECYCLE CHART (Income vs Expenses)
+                // 11. GENERATE LIFECYCLE CHART (Income vs Expenses vs Target Savings)
                 document.getElementById('lifecycleChartBox').classList.remove('hidden');
                 
                 const chartLabels = [];
                 const incomeLine = [];
                 const expenseLine = [];
+                const targetCorpusLine = [];
                 
-                // Calculate base living standard based on city tier
-                const baseLivingYr = (15000 * cityMult) * 12; 
-                
-                for (let a = age; a <= 85; a += 2) { // Plot every 2 years to keep chart clean
-                    chartLabels.push("Age " + a);
-                    let yearsFromNow = a - age;
+                // Determine base family living expenses
+                let baseExpenseYr = 0;
+                if (isEdgeCase) {
+                    baseExpenseYr = (15000 * cityMult) * 12; // Single survival base
+                } else {
+                    baseExpenseYr = ((income + sIncome) * 12 * 0.7); // Standard family base (70% of income)
+                }
+
+                // Pre-calculate every year's exact cash flow to Age 85
+                const yearlyExpenses = [];
+                for (let a = age; a <= 85; a++) {
+                    let t = a - age;
+                    let exp = baseExpenseYr * Math.pow(1 + gInf, t);
+                    exp += (monthlyMed * 12) * Math.pow(1 + medInf, t);
                     
-                    // 1. Calculate Income Line for this age
+                    if (!isEdgeCase) {
+                        if (fAlive || mAlive) {
+                            const pAge = Math.max(fAlive ? parseInt(document.getElementById('fatherAge').value) : 0, mAlive ? parseInt(document.getElementById('motherAge').value) : 0);
+                            if (pAge + t <= 85) {
+                                const pMult = (fAlive && mAlive) ? 1.0 : 0.6;
+                                exp += ((parseFloat(document.getElementById('parentMonthly').value) || 0) * 12 * pMult) * Math.pow(1 + gInf, t);
+                            }
+                        }
+                        if (isMarried) {
+                            document.querySelectorAll('.child-block').forEach(block => {
+                                const cAge = parseInt(block.querySelector('.c-age').value) || 0;
+                                const mAge = parseInt(block.querySelector('.c-mstone-age').value) || 21;
+                                const mAmt = parseFloat(block.querySelector('.c-mstone-amt').value) || 0;
+                                // If the child hits the milestone age this year, add the massive spike
+                                if (cAge + t === mAge) {
+                                    exp += mAmt * Math.pow(1 + gInf, t);
+                                }
+                            });
+                        }
+                    }
+                    yearlyExpenses.push(exp);
+                }
+
+                // Populate chart arrays (sampling every 2 years for a clean X-axis)
+                for (let t = 0; t <= 85 - age; t += 2) {
+                    let currentAge = age + t;
+                    chartLabels.push("Age " + currentAge);
+                    
+                    // 1. Income Line
                     let plotIncome = 0;
-                    if (a <= retireAge) {
-                        plotIncome = ((income + sIncome) * 12) * Math.pow(1 + gInf, yearsFromNow);
+                    if (currentAge <= retireAge) {
+                        plotIncome = ((income + sIncome) * 12) * Math.pow(1 + gInf, t);
                     } else {
-                        plotIncome = (passiveIncome * 12) * Math.pow(1 + gInf, yearsFromNow);
+                        plotIncome = (passiveIncome * 12) * Math.pow(1 + gInf, t);
                     }
                     incomeLine.push(Math.round(plotIncome));
                     
-                    // 2. Calculate Base Expense Line for this age
-                    let plotExpense = baseLivingYr * Math.pow(1 + gInf, yearsFromNow);
-                    plotExpense += (monthlyMed * 12) * Math.pow(1 + medInf, yearsFromNow); // Medical drain
+                    // 2. Expense Line (Plotted from our pre-calculated array)
+                    expenseLine.push(Math.round(yearlyExpenses[t]));
                     
-                    // Add Parent Support if they are still likely alive (assuming up to age 85)
-                    if (fAlive || mAlive) {
-                        const pAge = Math.max(fAlive ? parseInt(document.getElementById('fatherAge').value) : 0, mAlive ? parseInt(document.getElementById('motherAge').value) : 0);
-                        if (pAge + yearsFromNow <= 85) {
-                            const pMult = (fAlive && mAlive) ? 1.0 : 0.6;
-                            plotExpense += ((parseFloat(document.getElementById('parentMonthly').value) || 0) * 12 * pMult) * Math.pow(1 + gInf, yearsFromNow);
-                        }
+                    // 3. Target Corpus Line (Minimum Required Savings)
+                    // This calculates the Present Value of all future expenses from 'currentAge' to 85.
+                    let requiredCorpus = 0;
+                    for (let future = t; future <= 85 - age; future++) {
+                        let yearsAhead = future - t; // Discounting back to 'currentAge'
+                        requiredCorpus += yearlyExpenses[future] / Math.pow(1 + roi, yearsAhead);
                     }
-                    
-                    // Add Child Milestones (Spikes)
-                    if (isMarried) {
-                        document.querySelectorAll('.child-block').forEach(block => {
-                            const cAge = parseInt(block.querySelector('.c-age').value) || 0;
-                            const mAge = parseInt(block.querySelector('.c-mstone-age').value) || 21;
-                            const mAmt = parseFloat(block.querySelector('.c-mstone-amt').value) || 0;
-                            
-                            // If the child hits the milestone age during this 2-year chart window
-                            if (cAge + yearsFromNow === mAge || cAge + yearsFromNow === mAge + 1) {
-                                plotExpense += mAmt * Math.pow(1 + gInf, yearsFromNow);
-                            }
-                        });
-                    }
-                    
-                    expenseLine.push(Math.round(plotExpense));
+                    targetCorpusLine.push(Math.round(requiredCorpus));
                 }
 
                 // Destroy old chart if it exists so they don't overlap
@@ -852,7 +872,8 @@
                                 backgroundColor: 'rgba(22, 163, 74, 0.1)',
                                 borderWidth: 2,
                                 fill: true,
-                                tension: 0.3
+                                tension: 0.3,
+                                pointRadius: 0
                             },
                             {
                                 label: 'Projected Expenses & Milestones',
@@ -862,7 +883,17 @@
                                 borderWidth: 2,
                                 fill: true,
                                 tension: 0.3,
-                                pointRadius: 3 // Highlights spikes
+                                pointRadius: 3
+                            },
+                            {
+                                label: 'Min. Required Savings (Target Wealth)',
+                                data: targetCorpusLine,
+                                borderColor: '#8b5cf6', // Purple
+                                borderDash: [5, 5], // Dashed line to represent a "Target"
+                                borderWidth: 2,
+                                fill: false,
+                                tension: 0.3,
+                                pointRadius: 0
                             }
                         ]
                     },
@@ -874,7 +905,7 @@
                                 beginAtZero: true,
                                 ticks: {
                                     callback: function(value) {
-                                        return '₹' + (value / 100000).toFixed(1) + 'L'; // Formats as Lakhs for readability
+                                        return '₹' + (value / 100000).toFixed(1) + 'L'; 
                                     }
                                 }
                             }
@@ -898,7 +929,7 @@
             }
         }
 
-        // 11. PDF AND EMAIL TRIGGER
+        // 12. PDF AND EMAIL TRIGGER
         function generatePDFandEmail() {
             // Check if user bypassed the gate somehow
             if(!clientName) clientName = "Not Provided";

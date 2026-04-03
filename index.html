@@ -780,7 +780,7 @@
                     document.getElementById('forecastBox').classList.add('hidden');
                 }
 
-                // 11. GENERATE LIFECYCLE CHART (Income vs Expenses vs Target Savings)
+                // 11. GENERATE LIFECYCLE CHART (Dual Y-Axis & Net Target Wealth)
                 document.getElementById('lifecycleChartBox').classList.remove('hidden');
                 
                 const chartLabels = [];
@@ -840,16 +840,32 @@
                     }
                     incomeLine.push(Math.round(plotIncome));
                     
-                    // 2. Expense Line (Plotted from our pre-calculated array)
+                    // 2. Expense Line
                     expenseLine.push(Math.round(yearlyExpenses[t]));
                     
-                    // 3. Target Corpus Line (Minimum Required Savings)
-                    // This calculates the Present Value of all future expenses from 'currentAge' to 85.
-                    let requiredCorpus = 0;
+                    // 3. True Target Corpus (PV of Future Expenses MINUS PV of Future Income)
+                    let pvFutureExpenses = 0;
+                    let pvFutureIncome = 0;
+
                     for (let future = t; future <= 85 - age; future++) {
                         let yearsAhead = future - t; // Discounting back to 'currentAge'
-                        requiredCorpus += yearlyExpenses[future] / Math.pow(1 + roi, yearsAhead);
+                        
+                        // Future Expenses
+                        pvFutureExpenses += yearlyExpenses[future] / Math.pow(1 + roi, yearsAhead);
+                        
+                        // Future Income
+                        let futureAge = age + future;
+                        let futureInc = 0;
+                        if (futureAge <= retireAge) {
+                            futureInc = ((income + sIncome) * 12) * Math.pow(1 + gInf, future);
+                        } else {
+                            futureInc = (passiveIncome * 12) * Math.pow(1 + gInf, future);
+                        }
+                        pvFutureIncome += futureInc / Math.pow(1 + roi, yearsAhead);
                     }
+                    
+                    // The minimum required savings is the shortfall between what they will spend and what they will earn
+                    let requiredCorpus = Math.max(0, pvFutureExpenses - pvFutureIncome);
                     targetCorpusLine.push(Math.round(requiredCorpus));
                 }
 
@@ -858,7 +874,7 @@
                     myChart.destroy();
                 }
 
-                // Draw the new chart
+                // Draw the new chart with Dual Y-Axes
                 const ctx = document.getElementById('cashflowChart').getContext('2d');
                 myChart = new Chart(ctx, {
                     type: 'line',
@@ -873,27 +889,30 @@
                                 borderWidth: 2,
                                 fill: true,
                                 tension: 0.3,
-                                pointRadius: 0
+                                pointRadius: 0,
+                                yAxisID: 'y' // Left Axis
                             },
                             {
-                                label: 'Projected Expenses & Milestones',
+                                label: 'Projected Expenses',
                                 data: expenseLine,
                                 borderColor: '#dc2626', // Red
                                 backgroundColor: 'rgba(220, 38, 38, 0.1)',
                                 borderWidth: 2,
                                 fill: true,
                                 tension: 0.3,
-                                pointRadius: 3
+                                pointRadius: 3,
+                                yAxisID: 'y' // Left Axis
                             },
                             {
-                                label: 'Min. Required Savings (Target Wealth)',
+                                label: 'Target Wealth Corpus',
                                 data: targetCorpusLine,
                                 borderColor: '#8b5cf6', // Purple
-                                borderDash: [5, 5], // Dashed line to represent a "Target"
+                                borderDash: [5, 5],
                                 borderWidth: 2,
                                 fill: false,
                                 tension: 0.3,
-                                pointRadius: 0
+                                pointRadius: 0,
+                                yAxisID: 'y1' // Right Axis
                             }
                         ]
                     },
@@ -902,10 +921,25 @@
                         interaction: { mode: 'index', intersect: false },
                         scales: {
                             y: { 
-                                beginAtZero: true,
+                                type: 'linear',
+                                display: true,
+                                position: 'left',
+                                title: { display: true, text: 'Cashflow (₹)', font: {size: 10} },
                                 ticks: {
                                     callback: function(value) {
-                                        return '₹' + (value / 100000).toFixed(1) + 'L'; 
+                                        return (value / 100000).toFixed(1) + 'L'; 
+                                    }
+                                }
+                            },
+                            y1: {
+                                type: 'linear',
+                                display: true,
+                                position: 'right',
+                                title: { display: true, text: 'Target Wealth (₹)', font: {size: 10} },
+                                grid: { drawOnChartArea: false }, // Prevents overlapping grid lines
+                                ticks: {
+                                    callback: function(value) {
+                                        return (value / 100000).toFixed(0) + 'L'; 
                                     }
                                 }
                             }
